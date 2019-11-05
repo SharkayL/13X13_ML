@@ -46,7 +46,6 @@ public class DarkLayout
     {
         new PlaceItem(2, 3),
         new PlaceItem(4, 10),
-        new PlaceItem(6, 0),
         new PlaceItem(6, 7),
         new PlaceItem(10, 3),
         new PlaceItem(9, 10),

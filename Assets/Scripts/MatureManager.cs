@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class MatureManager : MonoBehaviour {
     public BoardState board;
     public GameObject cellPrefab;
+    int gridSize = 70;
     public GameObject parent;
 
     public GameObject player1;
@@ -47,6 +48,9 @@ public class MatureManager : MonoBehaviour {
     public Text winText;
 
     public Button temp;
+    public Button hide;
+    bool h = false;
+    public GameObject i;
 
     // Use this for initialization
     void Start () {
@@ -124,16 +128,65 @@ public class MatureManager : MonoBehaviour {
             instruction.text = defaultText;
         };
         board.Init();
-        foreach (var cell in board.lightGrids)
-        {
-            cell.InitGameObject(this);
-        }
+
         temp.GetComponent<Button>().onClick.AddListener(() => SkipAction());
+        hide.GetComponent<Button>().onClick.AddListener(() => HideInventory());
     }
 
     public void SkipAction() {
         //for playtesting.
         board.currentPlayer.UseAction();
+    }
+    public void HideInventory()
+    {
+        h = !h;
+        i.SetActive(h);
+        cardInventory.SetActive(h);
+    }
+
+    public void BoardLayout(bool start)
+    {
+        for (int i = 0; i < 13; ++i)
+        {
+            for (int j = 0; j < 13; ++j)
+            {
+                if (board.isLight)
+                {
+                    CellDisplay(board.lightGrids[i, j]);
+                }
+                if (!board.isLight) {
+                    CellDisplay(board.darkGrids[i, j]);
+                }
+
+            }
+        }
+        if (board.isLight)
+        {
+            LightLayout.InitLayout(board, false);
+            foreach (var cell in board.lightGrids)
+            {
+                cell.InitGameObject(this,start);
+            }
+        }
+        if (!board.isLight)
+        {
+            DarkLayout.InitLayout(board);
+            foreach (var cell in board.darkGrids)
+            {
+                cell.InitGameObject(this,start);
+            }
+        }
+    }
+    public void CellDisplay(GridInfo g)
+    {
+        var obj = GameObject.Instantiate(cellPrefab);
+        obj.transform.SetParent(parent.transform);
+
+            obj.GetComponent<UIGrid>().info = g;
+            g.cell = obj;
+
+   
+        obj.transform.localPosition = new Vector3(gridSize * g.column, gridSize * g.row, 0);
     }
     private void Awake()
     {
@@ -233,4 +286,11 @@ public class MatureManager : MonoBehaviour {
         return null;
     }
 
+    public void DestroyCurrentBoard() {
+
+        UIGrid[] cells = FindObjectsOfType<UIGrid>();
+        foreach (var cell in cells) {
+            Destroy(cell.gameObject);
+        }
+    }
 }

@@ -86,10 +86,10 @@ public class GridInfo
         return obj;
     }
 
-    public void InitGameObject(MatureManager manager)
+    public void InitGameObject(MatureManager manager,bool start)
     {
         GameObject obj = null;
-        if (this.startingPlayer != -1) {
+        if (start && this.startingPlayer != -1) {
             obj = InitPlayer(manager, this.startingPlayer);
         }
         if (this.containsCard) {

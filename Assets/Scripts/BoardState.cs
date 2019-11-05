@@ -6,16 +6,16 @@ using System;
 public class BoardState {
     public GridInfo[,] lightGrids = new GridInfo[13, 13];
     public GridInfo[,] darkGrids = new GridInfo[13, 13];
-    public bool flipped; // true is dark, false is light.
     public List<PlayerState> players = new List<PlayerState>();
     List<Item> items;
+    public bool isLight = true;
     public int currentTurn = 0;
     public PlayerState currentPlayer;
     int maxTurns = 40;
     public GameObject cellPrefab;
     public GameObject parent;
     public MatureManager manager;
-    int gridSize = 70;
+    
     public static int defaultActionCount = 2;
 
     public Action<PlayerState,PlayerState> playerTurnStart;
@@ -76,11 +76,11 @@ public class BoardState {
 
     public GridInfo GetGrid(int col,int row)
     {
-        if (flipped) {
+        if (!isLight) {
             return darkGrids[col, 12- row];
         }
         else {
-            return lightGrids[col,12- row];
+            return lightGrids[col, 12- row];
         }
     }
 
@@ -97,21 +97,25 @@ public class BoardState {
         
         currentPlayer = players[0];
         currentPlayer.actionCount = defaultActionCount;
-        for (int i = 0; i < 13; ++i) {
-            for (int j = 0; j < 13; ++j) {
+        for (int i = 0; i < 13; ++i)
+        {
+            for (int j = 0; j < 13; ++j)
+            {
                 var light = new GridInfo(i, j);
-                light.board = this;
                 var dark = new GridInfo(i, j);
                 lightGrids[i, j] = light;
                 darkGrids[i, j] = dark;
-                var obj = GameObject.Instantiate(cellPrefab);
-                obj.transform.SetParent(parent.transform);
-                obj.GetComponent<UIGrid>().info = light;
-                light.cell = obj;
-                obj.transform.localPosition = new Vector3(gridSize * i, gridSize * j, 0);
+                light.board = this;
+                dark.board = this;
+                manager.CellDisplay(light);
             }
         }
-        LightLayout.InitLayout(this);
+        LightLayout.InitLayout(this, true);
+        foreach (var cell in lightGrids)
+        {
+            cell.InitGameObject(manager,true);
+        }
+
         for (int i = 0; i < 4; ++i)
         {
             players[i].playerSprite = manager.playerSprites[i];
@@ -131,9 +135,24 @@ public class BoardState {
             //Return to mainMenu;
             return;
         }
+        if (flipped) {
+            BoardFlip();
+        }
         currentPlayer = players[currentTurn % players.Count];
         currentPlayer.actionCount = defaultActionCount;
         this.NotifyPlayerTurnStarted(currentPlayer, oldPlayer);
+    }
+
+    public void BoardFlip() {
+        isLight = !isLight;
+        manager.DestroyCurrentBoard();
+        manager.BoardLayout(false);
+        foreach (var player in players)
+        {
+            int row = player.currentCell.row;
+            int column = player.currentCell.column;
+            player.currentCell = GetGrid(column, 12 - row);
+        }
     }
 
     public int CurrentPlayerNumber(int currentTurn) {
@@ -160,5 +179,11 @@ public class BoardState {
         }
         Debug.Log("No teammate");
         return null;
+    }
+
+    public bool flipped {
+        get {
+            return (int)currentTurn % 12 == 0 && currentTurn != 0;
+        }
     }
 }

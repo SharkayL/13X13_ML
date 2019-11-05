@@ -102,11 +102,14 @@ public class LightLayout
 
     static Placement exit = new Placement(6, 12);
 
-    public static void InitLayout(BoardState board)
+    public static void InitLayout(BoardState board, bool start)
     {
-        foreach (var player in playerPlacements)
+        if (start)
         {
-            board.GetGrid(player).startingPlayer = player.player;
+            foreach (var player in playerPlacements)
+            {
+                board.GetGrid(player).startingPlayer = player.player;
+            }
         }
         foreach (var eve in eventPlacements)
         {

@@ -53,7 +53,10 @@ public class PlayerState
                 var oldCell = _currentCell;
                 _currentCell = value;
                 this.board.NotifyPlayerMoved(this, oldCell, value);
-
+                if (value.containsEve)
+                {
+                    TriggerRandomEvent();
+                }
                 if (!this.ghost)
                 {
                     if (value.containsItem)
@@ -101,7 +104,6 @@ public class PlayerState
     {
         int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.movementCards.Count));
         var card = movementCards[index - 1];
-        //this.playingCard = card;
         //Debug.Log(card.GetType().Name);
         return card;
     }
@@ -145,6 +147,15 @@ public class PlayerState
         
         items.Add(item);
         Debug.Log(item.GetType().Name);
+    }
+
+    public void TriggerRandomEvent()
+    {
+        EventToken eve = EventToken.Init(EventToken.PickRandom());
+        if (eve.canEffect(this)) {
+            //animation?
+            Debug.Log(eve.GetType().Name);
+        }
     }
 
     public void DiscardCard(Card card) {
