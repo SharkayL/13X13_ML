@@ -25,6 +25,7 @@ public class BoardState {
     public Action<PlayerState, Card> playerGetsCard;
     public Action<PlayerState, Card> playerLosesCard;
     public Func<PlayerState, GridInfo, GridInfo, bool> playerMoves;
+    public Action<PlayerState, EventToken> PlayerTriggersEve;
     public Action<int> teamWins;
 
     public void NotifyGameover(int team) {
@@ -73,6 +74,13 @@ public class BoardState {
         if (playerLosesCard != null)
         {
             playerLosesCard(player, card);
+        }
+    }
+
+    public void NotifyEventHappened(PlayerState player, EventToken eve) {
+        if(PlayerTriggersEve != null)
+        {
+            PlayerTriggersEve(player, eve);
         }
     }
 
@@ -132,6 +140,7 @@ public class BoardState {
     public void NextTurn()
     {
         var oldPlayer = this.currentPlayer;
+        oldPlayer.noItem = false;
         currentTurn += 1;
         if (currentTurn >= maxTurns) {
             //Return to mainMenu;
@@ -142,6 +151,10 @@ public class BoardState {
         }
         currentPlayer = players[currentTurn % players.Count];
         currentPlayer.actionCount = defaultActionCount;
+        if (currentPlayer.lessAction) {
+            currentPlayer.UseAction();
+            currentPlayer.lessAction = false;
+        }
         this.NotifyPlayerTurnStarted(currentPlayer, oldPlayer);
     }
 

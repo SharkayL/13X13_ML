@@ -8,8 +8,8 @@ public enum possibleEvents {
     adding2Cards,
     adding1Item,
     adding1Both,
-    //decreasingMoves,
-    //banning1Item,
+    decreasingMoves,
+    banning1Item,
     losing1card,
     becomingRegular
 }
@@ -38,6 +38,13 @@ public abstract class EventToken
         if (eve == possibleEvents.becomingRegular) {
             return new BecomingRegular();
         }
+        if (eve == possibleEvents.decreasingMoves) {
+            return new DecreasingMoves();
+        }
+        if (eve == possibleEvents.banning1Item) {
+            return new BanninngItems();
+        }
+
         return null;
     }
     public abstract bool canEffect(PlayerState playedBy);
@@ -160,6 +167,46 @@ public class BecomingRegular : EventToken
             if (player.ghost) {
                 player.AddRandomCard();
             }
+        }
+        return true;
+    }
+}
+
+public class DecreasingMoves : EventToken
+{
+
+    public override bool canEffect(PlayerState playedBy)
+    {
+        List<PlayerState> opponents = new List<PlayerState>();
+        foreach (var player in playedBy.board.players)
+        {
+            if (player.team != playedBy.team)
+            {
+                opponents.Add(player);
+            }
+        }
+        foreach (var player in opponents)
+        {
+            player.lessAction = true;
+        }
+        return true;
+    }
+}
+
+public class BanninngItems : EventToken {
+    public override bool canEffect(PlayerState playedBy)
+    {
+        List<PlayerState> opponents = new List<PlayerState>();
+        foreach (var player in playedBy.board.players)
+        {
+            if (player.team != playedBy.team)
+            {
+                opponents.Add(player);
+            }
+        }
+        foreach (var player in opponents)
+        {
+            player.noItem = true;
         }
         return true;
     }
