@@ -113,7 +113,7 @@ public class BoardState {
         LightLayout.InitLayout(this, true);
         foreach (var cell in lightGrids)
         {
-            cell.InitGameObject(manager,true);
+            cell.InitGameObject(manager,true, isLight);
         }
 
         for (int i = 0; i < 4; ++i)

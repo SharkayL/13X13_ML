@@ -86,23 +86,39 @@ public class GridInfo
         return obj;
     }
 
-    public void InitGameObject(MatureManager manager,bool start)
+    public void InitGameObject(MatureManager manager,bool start, bool isLight)
     {
         GameObject obj = null;
         if (start && this.startingPlayer != -1) {
             obj = InitPlayer(manager, this.startingPlayer);
         }
         if (this.containsCard) {
-            obj = GameObject.Instantiate(manager.card);
+            if (isLight)
+            {
+                obj = GameObject.Instantiate(manager.card);
+            }
+            else obj = GameObject.Instantiate(manager.darkCard);
         }
         if (this.containsEve) {
-            obj = GameObject.Instantiate(manager.eve);
+            if (isLight)
+            {
+                obj = GameObject.Instantiate(manager.eve);
+            }
+            else obj = GameObject.Instantiate(manager.darkEve);
         }
         if (this.containsItem) {
-            obj = GameObject.Instantiate(manager.item);
+            if (isLight)
+            {
+                obj = GameObject.Instantiate(manager.item);
+            }
+            else obj = GameObject.Instantiate(manager.darkItem);
         }
         if (this.obstacle) {
-            obj = GameObject.Instantiate(manager.obstacle);
+            if (isLight)
+            {
+                obj = GameObject.Instantiate(manager.obstacle);
+            }
+            else obj = GameObject.Instantiate(manager.darkObstacle);
         }
         if (this.exit) {
             obj = GameObject.Instantiate(manager.exit);
