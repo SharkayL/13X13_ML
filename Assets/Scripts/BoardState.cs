@@ -15,8 +15,9 @@ public class BoardState {
     public GameObject cellPrefab;
     public GameObject parent;
     public MatureManager manager;
+    public bool over = false;
     
-    public static int defaultActionCount = 2;
+    public static int defaultActionCount = 20;
 
     public Action<PlayerState,PlayerState> playerTurnStart;
     public Action<PlayerState, Item> playerGetsItem;
@@ -28,6 +29,7 @@ public class BoardState {
 
     public void NotifyGameover(int team) {
         if (teamWins != null) {
+            over = true;
             teamWins(team);
         }
     }
@@ -113,7 +115,7 @@ public class BoardState {
         LightLayout.InitLayout(this, true);
         foreach (var cell in lightGrids)
         {
-            cell.InitGameObject(manager,true);
+            cell.InitGameObject(manager,true, isLight);
         }
 
         for (int i = 0; i < 4; ++i)

@@ -7,11 +7,12 @@ using UnityEngine.UI;
 
 public enum possibleCards
 {
-    adjacentBy1,
+    //adjacentBy1,
     diagonalBy1,
     adjacentBy2,
     diagonalBy2,
-    cross1Obstacle
+    cross1Obstacle,
+    straightBy3,
 }
 public abstract class Card
 {
@@ -24,15 +25,24 @@ public abstract class Card
         return moveTo.player == null && !moveTo.obstacle;
     }
 
-    public static Card Convert(possibleCards card)
-    {
-        if (card == possibleCards.adjacentBy1)
+    //public static Card Convert(possibleCards card)
+    //{
+    //    if (card == possibleCards.adjacentBy1)
+    //    {
+    //        return new AdjacentBy1();
+    //    }
+    //    return null;
+    //}
+    public static bool Ajacent1Check(PlayerState playedBy, GridInfo moveTo) {
+        if (Card.baseCheck(playedBy, moveTo))
         {
-            return new AdjacentBy1();
+            if ((moveTo.row == playedBy.row && Math.Abs(moveTo.column - playedBy.col) == 1) || (moveTo.column == playedBy.col && Math.Abs(moveTo.row - playedBy.row) == 1))
+            {
+                return true;
+            }
         }
-        return null;
+        return false;
     }
-
     public abstract bool canMove(PlayerState playedBy, GridInfo moveTo);
 
     public bool move(PlayerState playedBy, GridInfo moveTo)
@@ -45,9 +55,16 @@ public abstract class Card
         if (moveTo.exit) {
             board.NotifyGameover(playedBy.team);
         }
-        playedBy.playingCard = null;
         playedBy.DiscardCard(this);
         playedBy.UseAction();
+        if (playedBy.ghost)
+        {
+            if (board.gameOver)
+            {
+                int winnerTeam = Math.Abs(playedBy.team - 1);
+                board.NotifyGameover(winnerTeam);
+            }
+        }
         return true;
     }
 
@@ -60,11 +77,12 @@ public abstract class Card
 
     public static Card Init(possibleCards card)
     {
-        if (card == possibleCards.adjacentBy1)
-        {
-            return new AdjacentBy1();
-        }
-        else if (card == possibleCards.adjacentBy2)
+        //if (card == possibleCards.adjacentBy1)
+        //{
+        //    return new AdjacentBy1();
+        //}
+        //else 
+        if (card == possibleCards.adjacentBy2)
         {
             return new AdjacentBy2();
         }
@@ -76,8 +94,12 @@ public abstract class Card
         {
             return new DiagonalBy2();
         }
-        else if (card == possibleCards.cross1Obstacle) {
+        else if (card == possibleCards.cross1Obstacle)
+        {
             return new Cross1Obstacle();
+        }
+        else if (card == possibleCards.straightBy3) {
+            return new StraightBy3();
         }
         return null;
     }
@@ -101,21 +123,21 @@ public abstract class Card
     }
 }
 
-public class AdjacentBy1 : Card
-{
+//public class AdjacentBy1 : Card
+//{
 
-    public override bool canMove(PlayerState playedBy, GridInfo moveTo)
-    {
-        if (Card.baseCheck(playedBy, moveTo))
-        {
-            if ((moveTo.row == playedBy.row && Math.Abs(moveTo.column - playedBy.col) == 1) || (moveTo.column == playedBy.col && Math.Abs(moveTo.row - playedBy.row) == 1))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-}
+//    public override bool canMove(PlayerState playedBy, GridInfo moveTo)
+//    {
+//        if (Card.baseCheck(playedBy, moveTo))
+//        {
+//            if ((moveTo.row == playedBy.row && Math.Abs(moveTo.column - playedBy.col) == 1) || (moveTo.column == playedBy.col && Math.Abs(moveTo.row - playedBy.row) == 1))
+//            {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//}
 
 public class AdjacentBy2 : Card
 {
@@ -177,6 +199,32 @@ public class Cross1Obstacle : Card
             {
                 return true;
             }
+        }
+        return false;
+    }
+}
+
+public class StraightBy3 : Card
+{
+    public override bool canMove(PlayerState playedBy, GridInfo moveTo)
+    {
+        if (Card.baseCheck(playedBy, moveTo))
+        {
+            if (moveTo.row == playedBy.row && Math.Abs(moveTo.column - playedBy.col) == 3) {
+                int g = moveTo.column - playedBy.col;
+                if (board.GetGrid(playedBy.col + g / 3, playedBy.row).obstacle) { return false; }
+                if (board.GetGrid(playedBy.col + g / 3 * 2, playedBy.row).obstacle) { return false; }
+                else {
+                    Debug.Log(playedBy.team);
+                    return true; }
+            }
+            else if (moveTo.column == playedBy.col && Math.Abs(moveTo.row - playedBy.row) == 3) {
+                int g = moveTo.row - playedBy.row;
+                if (board.GetGrid(playedBy.col, playedBy.row + g/3).obstacle) { return false; }
+                if (board.GetGrid(playedBy.col, playedBy.row + g/3*2).obstacle) { return false; }
+                else return true;
+            }
+            
         }
         return false;
     }

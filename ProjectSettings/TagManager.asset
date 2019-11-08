@@ -38,6 +38,15 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Bgd
+    uniqueID: 1880629383
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Game
+    uniqueID: 1833017123
+    locked: 0
+  - name: Menu
+    uniqueID: 3134032559
     locked: 0

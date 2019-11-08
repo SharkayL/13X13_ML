@@ -73,12 +73,7 @@ public class PlayerState
                     //    board.NotifyGameover(this.team);
                     //}
                 }
-                if (this.ghost) {
-                    if (board.gameOver) {
-                        int winnerTeam = Math.Abs(this.team - 1);
-                        board.NotifyGameover(winnerTeam);
-                    }
-                }
+                
             }
         }
     }
@@ -159,6 +154,10 @@ public class PlayerState
     }
 
     public void DiscardCard(Card card) {
+        if(playingCard == card)
+        {
+            playingCard = null;
+        }
         movementCards.Remove(card);
         board.NotifyCardLost(this, card);
     }
@@ -170,4 +169,5 @@ public class PlayerState
     public bool ghost {
         get { return this.movementCards.Count<=0;  }
     }
+
 }

@@ -14,11 +14,19 @@ public class MatureManager : MonoBehaviour {
     public GameObject player2;
     public GameObject player3;
     public GameObject player4;
+
     public GameObject eve;
     public GameObject card;
     public GameObject item;
     public GameObject obstacle;
     public GameObject exit;
+
+    public GameObject darkEve;
+    public GameObject darkCard;
+    public GameObject darkItem;
+    public GameObject darkObstacle;
+
+    public GameObject background;
 
     public GameObject itemInventory;
     public Image imgPrefab;
@@ -160,12 +168,14 @@ public class MatureManager : MonoBehaviour {
 
             }
         }
+        background.transform.GetChild(0).gameObject.SetActive(board.isLight);
+        background.transform.GetChild(1).gameObject.SetActive(!board.isLight);
         if (board.isLight)
         {
             LightLayout.InitLayout(board, false);
             foreach (var cell in board.lightGrids)
             {
-                cell.InitGameObject(this,start);
+                cell.InitGameObject(this,start, board.isLight);
             }
         }
         if (!board.isLight)
@@ -173,7 +183,7 @@ public class MatureManager : MonoBehaviour {
             DarkLayout.InitLayout(board);
             foreach (var cell in board.darkGrids)
             {
-                cell.InitGameObject(this,start);
+                cell.InitGameObject(this,start, board.isLight);
             }
         }
     }
