@@ -17,8 +17,11 @@ public class PlayerState
     public int actionCount;
     public int itemsCount;
     public int maxItems;
-    int initCards = 5;
+    int initCards = 1;
     public int team;
+
+    public bool lessAction = false;
+    public bool noItem = false;
 
     public PlayerState(BoardState board)
     {
@@ -91,7 +94,11 @@ public class PlayerState
         board.manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", actionCount);
         if (actionCount <= 0)
         {
+            board.manager.ghost.SetActive(false);
             board.NextTurn();
+        }
+        else if (ghost) {
+            board.manager.ghost.SetActive(ghost);
         }
     }
     
@@ -148,8 +155,7 @@ public class PlayerState
     {
         EventToken eve = EventToken.Init(EventToken.PickRandom());
         if (eve.canEffect(this)) {
-            //animation?
-            Debug.Log(eve.GetType().Name);
+            board.NotifyEventHappened(this, eve);
         }
     }
 

@@ -19,6 +19,9 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         {
             return;
         }
+        if (manager.board.currentPlayer.noItem) {
+            return;
+        }
         parent = this.transform.parent;
         this.transform.SetParent(manager.ratioPanel.transform);
         this.transform.position = Input.mousePosition;

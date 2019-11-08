@@ -14,6 +14,7 @@ public class MatureManager : MonoBehaviour {
     public GameObject player2;
     public GameObject player3;
     public GameObject player4;
+    public GameObject ghost;
 
     public GameObject eve;
     public GameObject card;
@@ -54,6 +55,7 @@ public class MatureManager : MonoBehaviour {
     public Text status;
     public string defaultText;
     public Text winText;
+    public Text eveText;
 
     public Button temp;
     public Button hide;
@@ -117,14 +119,21 @@ public class MatureManager : MonoBehaviour {
                 displayedItems.Remove(item);
             }
         };
+        this.board.PlayerTriggersEve = (player, eve) => {
+            Debug.Log(eve.GetType().Name);
+            eveText.text = "You trigered Event: " + eve.GetType().Name;
+            //Displaying icon on top of player;
+        };
+
         this.board.playerTurnStart = (newPlayer, oldPlayer) =>
         {
             currentPlayer.sprite = playerSprites[board.currentTurn % board.players.Count];
-            status.text = "is ghost? " + board.currentPlayer.ghost;
+            //status.text = "is ghost? " + board.currentPlayer.ghost;            
             nextPlayer1.sprite = playerSprites[(board.currentTurn + 1) % board.players.Count];
             nextPlayer2.sprite = playerSprites[(board.currentTurn +2) % board.players.Count];
             nextPlayer3.sprite = playerSprites[(board.currentTurn +3) % board.players.Count];
             currentPlayer.gameObject.GetComponent<UIPlayer>().player = newPlayer;
+            ghost.SetActive(board.currentPlayer.ghost);
             nextPlayer1.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 1) % board.players.Count];
             nextPlayer2.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 2) % board.players.Count];
             nextPlayer3.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 3) % board.players.Count];
@@ -210,7 +219,7 @@ public class MatureManager : MonoBehaviour {
                 var key = entry.Key;
                 var obj = entry.Value;
                 int space = (560 - 10 * 2 - 110) / (player.movementCards.Count - 1);
-                obj.transform.localPosition = new Vector3(10 + space * player.CardIndex(key), -10);
+                obj.transform.localPosition = new Vector3(20 + space * player.CardIndex(key), -10);
             }
         }
         else
@@ -218,7 +227,7 @@ public class MatureManager : MonoBehaviour {
             foreach (var entry in displayedCards) {
                 var key = entry.Key;
                 var obj = entry.Value;
-                obj.transform.localPosition = new Vector3(10 + 110 * player.CardIndex(key), -10);
+                obj.transform.localPosition = new Vector3(20 + 110 * player.CardIndex(key), -10);
             }
 
         }

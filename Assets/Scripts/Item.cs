@@ -12,7 +12,6 @@ public enum PossibleItems
     longArm,
     longMug,
     blade,
-    //liquidNitrogen,
     //shield
     //ice,
     //earth
