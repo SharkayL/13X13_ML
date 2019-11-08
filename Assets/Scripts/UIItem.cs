@@ -12,6 +12,9 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (manager.board.over) {
+            return;
+        }
         if (manager.board.currentPlayer.ghost)
         {
             return;

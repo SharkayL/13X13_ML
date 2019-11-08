@@ -13,6 +13,9 @@ public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler 
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (manager.board.over) {
+            return;
+        }
         if (manager.board.currentPlayer.ghost) {
             return;
         }

@@ -11,10 +11,22 @@ public void OnPointerClick(PointerEventData eventData)
     {
         var board = info.board;
         var player = board.currentPlayer;
+        if (board.over) {
+            return;
+        }
         if (player.actionCount > 0)
         {
-            if (player.ghost) {
-                player.playingCard = Card.Convert(possibleCards.adjacentBy1);
+            //if (player.ghost) {
+            //    player.playingCard = Card.Convert(possibleCards.adjacentBy1);
+            //}
+            if (Card.Ajacent1Check(player, info)) {
+                player.currentCell = info;
+                if (info.exit)
+                {
+                    board.NotifyGameover(player.team);
+                }
+                player.UseAction();
+                return;
             }
             if (player.playingCard != null)
             {
