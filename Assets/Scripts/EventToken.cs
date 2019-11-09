@@ -86,7 +86,7 @@ public class Adding1Item : EventToken
         PlayerState mate = playedBy.board.GetTeammate(playedBy);
         if (playedBy.ghost)
         {
-            if (mate.items.Count < 7)
+            if (mate.items.Count < 5)
             {
                 mate.AddRandomItem();
                 return true;
@@ -94,7 +94,7 @@ public class Adding1Item : EventToken
         }
         else
         {
-            if (playedBy.items.Count < 7)
+            if (playedBy.items.Count < 5)
             {
                 playedBy.AddRandomItem();
                 return true;
@@ -112,7 +112,7 @@ public class Adding1Both : EventToken
         if (playedBy.ghost)
         {
             mate.AddRandomCard();
-            if (mate.items.Count < 7)
+            if (mate.items.Count < 5)
             {
                 mate.AddRandomItem();
             }
@@ -120,11 +120,11 @@ public class Adding1Both : EventToken
         }
         else {
             playedBy.AddRandomCard();
-            if (playedBy.items.Count < 7)
+            if (playedBy.items.Count < 5)
             {
                 playedBy.AddRandomItem();
             }
-            else if (!mate.ghost && mate.items.Count < 7) {
+            else if (!mate.ghost && mate.items.Count < 5) {
                 mate.AddRandomItem();
             }
             return true;

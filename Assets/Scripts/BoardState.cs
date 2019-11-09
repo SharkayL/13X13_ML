@@ -129,6 +129,8 @@ public class BoardState {
         for (int i = 0; i < 4; ++i)
         {
             players[i].playerSprite = manager.playerSprites[i];
+            players[i].humanSprite = manager.humanSprites[i];
+            players[i].ghostSprite = manager.ghostSprites[i];
             players[i].team = (int)i % 2;
             players[i].InitPlayerCards();            
         }

@@ -14,10 +14,12 @@ public class PlayerState
     public BoardState board;
     public GameObject playerOG;
     public Sprite playerSprite;
+    public Sprite humanSprite;
+    public Sprite ghostSprite;
     public int actionCount;
     public int itemsCount;
     public int maxItems;
-    int initCards = 1;
+    int initCards = 2;
     public int team;
 
     public bool lessAction = false;
@@ -64,17 +66,13 @@ public class PlayerState
                 {
                     if (value.containsItem)
                     {
-                        if (this.items.Count < 7)
+                        if (this.items.Count < 5)
                             AddRandomItem();
                     }
                     if (value.containsCard)
                     {
                         AddRandomCard();
                     }
-                    //if (value.exit)
-                    //{
-                    //    board.NotifyGameover(this.team);
-                    //}
                 }
                 
             }
@@ -97,7 +95,12 @@ public class PlayerState
             board.manager.ghost.SetActive(false);
             board.NextTurn();
         }
-        else if (ghost) {
+        if (ghost) {
+            playerOG.GetComponent<SpriteRenderer>().sprite = ghostSprite;
+        }
+        else if (ghost)
+        {
+            board.manager.ghost.GetComponent<Image>().sprite = ghostSprite;
             board.manager.ghost.SetActive(ghost);
         }
     }

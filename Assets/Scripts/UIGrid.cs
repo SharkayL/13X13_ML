@@ -32,7 +32,6 @@ public void OnPointerClick(PointerEventData eventData)
             {
                 if (player.playingCard.move(player, info)){
                     board.manager.instruction.text = "You moved to a new position";
-                    board.manager.status.text = "is ghost? " + player.ghost;
                     Debug.Log("moved");
                 }
                 
@@ -53,6 +52,7 @@ public void OnPointerClick(PointerEventData eventData)
                                 Card randomCard = player.PickRandomCard();
                                 player.DiscardCard(randomCard);
                                 info.player.AddCard(randomCard);
+                                info.player.playerOG.GetComponent<SpriteRenderer>().sprite = info.player.humanSprite;
                                 Debug.Log("You gave away " + randomCard.GetType().Name + "!");
                             }
                             player.UseAction();

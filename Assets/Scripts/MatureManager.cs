@@ -16,6 +16,9 @@ public class MatureManager : MonoBehaviour {
     public GameObject player4;
     public GameObject ghost;
 
+    public List<Sprite> ghostSprites;
+    public List<Sprite> humanSprites;
+
     public GameObject eve;
     public GameObject card;
     public GameObject item;
@@ -52,7 +55,6 @@ public class MatureManager : MonoBehaviour {
     public Text instruction;
     public Text actionsCount;
     public Text tempInfo;
-    public Text status;
     public string defaultText;
     public Text winText;
     public Text eveText;
@@ -133,7 +135,12 @@ public class MatureManager : MonoBehaviour {
             nextPlayer2.sprite = playerSprites[(board.currentTurn +2) % board.players.Count];
             nextPlayer3.sprite = playerSprites[(board.currentTurn +3) % board.players.Count];
             currentPlayer.gameObject.GetComponent<UIPlayer>().player = newPlayer;
-            ghost.SetActive(board.currentPlayer.ghost);
+            if (board.currentPlayer.ghost)
+            {
+                ghost.GetComponent<Image>().sprite = board.currentPlayer.ghostSprite;
+                ghost.SetActive(board.currentPlayer.ghost);
+            }
+            
             nextPlayer1.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 1) % board.players.Count];
             nextPlayer2.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 2) % board.players.Count];
             nextPlayer3.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 3) % board.players.Count];
@@ -145,7 +152,6 @@ public class MatureManager : MonoBehaviour {
             instruction.text = defaultText;
         };
         board.Init();
-
         temp.GetComponent<Button>().onClick.AddListener(() => SkipAction());
         hide.GetComponent<Button>().onClick.AddListener(() => HideInventory());
     }
@@ -312,4 +318,5 @@ public class MatureManager : MonoBehaviour {
             Destroy(cell.gameObject);
         }
     }
+
 }
