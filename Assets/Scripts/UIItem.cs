@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
+public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler {
 
     public Item item;
     Vector3 pos;
@@ -54,5 +54,11 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
             
             //Destroy(this);
         }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        manager.itemName.text = string.Format("<b>{0}</b>", this.item.getName());
+        manager.itemDescrib.text = string.Format(this.item.getDescription());
     }
 }

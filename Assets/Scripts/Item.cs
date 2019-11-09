@@ -19,33 +19,20 @@ public enum PossibleItems
 
 public abstract class Item
 {
-    public GameObject itemToken;
+    //public GameObject itemToken;
 
     public abstract bool canPlay(PlayerState playedBy, PlayerState targetPlayer); // highlight the grid
 
     public abstract bool play(PlayerState playedBy, PlayerState targetPlayer);
 
-    public void Clear()
-    {
-        if(itemToken)
-        {
-            GameObject.Destroy(itemToken);
-        }
-    }
-
-    //public static possibleCards PickRandom()
-    //{
-    //    var entries = Enum.GetValues(typeof(possibleCards));
-    //    var index = (int)Math.Round(UnityEngine.Random.value * entries.Length);
-    //    return (possibleCards)entries.GetValue(index);
-    //}
+    public abstract string getName();
+    public abstract string getDescription();
 
     public static PossibleItems PickRandom()
     {
         var entries = Enum.GetValues(typeof(PossibleItems));
         var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
         return (PossibleItems)entries.GetValue(index);
-        //TEMPRORARY
     }
 
     public static Item Init(PossibleItems item)
@@ -74,7 +61,7 @@ public abstract class Item
         return Init(PickRandom());
     }
 
-    public abstract GameObject DisplayItem(MatureManager manager);
+    //public abstract GameObject DisplayItem(MatureManager manager);
 
     public bool UsedItem() {
         return false;
@@ -112,12 +99,22 @@ public class MagnetRed : Item {
             return false;
     }
 
-    public override GameObject DisplayItem(MatureManager manager)
+    public override string getName()
     {
-        itemToken = manager.item; 
-        this.itemToken = MatureManager.Instantiate(manager.item);
-        return itemToken;
+        return "Magnet Red";
     }
+    public override string getDescription()
+    {
+        return "Use Magnet Red to steal a movement card from a random opponent. If the opponent has the same item too, no card will be stole but items will be discarded.";
+    }
+
+
+    //public override GameObject DisplayItem(MatureManager manager)
+    //{
+    //    itemToken = manager.item; 
+    //    this.itemToken = MatureManager.Instantiate(manager.item);
+    //    return itemToken;
+    //}
 }
 public class MagnetBlue : Item
 {
@@ -153,11 +150,13 @@ public class MagnetBlue : Item
             return false;
     }
 
-    public override GameObject DisplayItem(MatureManager manager)
+    public override string getName()
     {
-        itemToken = manager.item; 
-        this.itemToken = MatureManager.Instantiate(manager.item);
-        return itemToken;
+        return "Magnet Blue";
+    }
+    public override string getDescription()
+    {
+        return "Use Magnet Red to steal a movement card from a random opponent. If the opponent has the same item too, no card will be stole but items will be discarded."; 
     }
 }
 
@@ -185,11 +184,13 @@ public class LongArm : Item {
         else
             return false;
     }
-    public override GameObject DisplayItem(MatureManager manager)
+    public override string getName()
     {
-        itemToken = manager.item;
-        this.itemToken = MatureManager.Instantiate(manager.item);
-        return itemToken;
+        return "Long Arm";
+    }
+    public override string getDescription()
+    {
+        return "Use Long Arm to steal an item form a random opponent. You may not see the item and only choose blindly.";
     }
 }
 
@@ -221,11 +222,13 @@ public class LongMug : Item
         else
             return false;
     }
-    public override GameObject DisplayItem(MatureManager manager)
+    public override string getName()
     {
-        itemToken = manager.item;
-        this.itemToken = MatureManager.Instantiate(manager.item);
-        return itemToken;
+        return "Long Mug";
+    }
+    public override string getDescription()
+    {
+        return "Use Long Mug to swap a random enemy’s item with one of yours.";
     }
 }
 public class Blade : Item
@@ -253,10 +256,12 @@ public class Blade : Item
         else
             return false;
     }
-    public override GameObject DisplayItem(MatureManager manager)
+    public override string getName()
     {
-        itemToken = manager.item;
-        this.itemToken = MatureManager.Instantiate(manager.item);
-        return itemToken;
+        return "Teleportation Blade";
+    }
+    public override string getDescription()
+    {
+        return "Use Teleporation Blade to forcefully swap your current position with a human player's.";
     }
 }

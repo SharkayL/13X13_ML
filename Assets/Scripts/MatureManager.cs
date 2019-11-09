@@ -64,6 +64,23 @@ public class MatureManager : MonoBehaviour {
     bool h = false;
     public GameObject i;
 
+    public Sprite magnetRed;
+    public Sprite magnetBlue;
+    public Sprite longArm;
+    public Sprite longMug;
+    public Sprite teleBlade;
+    public Text itemName;
+    public Text itemDescrib;
+
+    public Sprite add2C;
+    public Sprite add1I;
+    public Sprite add1B;
+    public Sprite decM;
+    public Sprite ban1I;
+    public Sprite los1C;
+    public Sprite beR;
+    public SpriteRenderer eveImg;
+
     // Use this for initialization
     void Start () {
 		board = new BoardState();       
@@ -122,7 +139,8 @@ public class MatureManager : MonoBehaviour {
             }
         };
         this.board.PlayerTriggersEve = (player, eve) => {
-            Debug.Log(eve.GetType().Name);
+            //Debug.Log(eve.GetType().Name);
+            DisplayEve(eve);          
             eveText.text = "You trigered Event: " + eve.GetType().Name;
             //Displaying icon on top of player;
         };
@@ -150,6 +168,8 @@ public class MatureManager : MonoBehaviour {
                 UpdateDisplayedItems(newPlayer);
             }
             instruction.text = defaultText;
+            itemName.text = null;
+            itemDescrib.text = null;
         };
         board.Init();
         temp.GetComponent<Button>().onClick.AddListener(() => SkipAction());
@@ -252,7 +272,7 @@ public class MatureManager : MonoBehaviour {
     }
     public void DisplayItem(Item item) {
         Image img = Image.Instantiate(this.board.manager.imgPrefab);
-        img.sprite = this.sword;
+        img.sprite = GetItemSprite(item);
         img.transform.SetParent(this.itemInventory.transform);
         img.transform.localScale = new Vector3(1, 1, 1);
         displayedItems.Add(item, img);
@@ -300,6 +320,17 @@ public class MatureManager : MonoBehaviour {
             }
         }
     }
+
+    public void DisplayEve(EventToken eve) {
+        var img = GameObject.Instantiate(this.board.manager.eveImg);
+        img.sprite = GetEveSprite(eve);
+
+        img.transform.SetParent(this.board.currentPlayer.playerOG.transform);
+        img.transform.localPosition = new Vector3(0,0.5f,0);
+        img.transform.localScale = new Vector3(1, 1, 1);
+        img.GetComponent<EveNotification>().manager = this;
+    }
+
     public PlayerState DroppedOnPlayer() {
         UIPlayer[] tokens = FindObjectsOfType<UIPlayer>();
         foreach (var token in tokens)
@@ -319,4 +350,24 @@ public class MatureManager : MonoBehaviour {
         }
     }
 
+    public Sprite GetItemSprite(Item item)
+    {
+        if (item is MagnetRed) return magnetRed;
+        if (item is MagnetBlue) return magnetBlue;
+        if (item is LongArm) return longArm;
+        if (item is LongMug) return longMug;
+        if (item is Blade) return teleBlade;
+
+        return null;
+    }
+    public Sprite GetEveSprite(EventToken eve) {
+        if (eve is Adding2Cards) return add2C;
+        if (eve is Adding1Item) return add1I;
+        if (eve is Adding1Both) return add1B;
+        if (eve is DecreasingMoves) return decM;
+        if (eve is BanninngItems) return ban1I;
+        if (eve is Losing1Card) return los1C;
+        if (eve is BecomingRegular) return beR;
+        return null;
+    }
 }
