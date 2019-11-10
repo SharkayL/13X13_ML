@@ -34,7 +34,6 @@ public class MatureManager : MonoBehaviour {
 
     public GameObject itemInventory;
     public Image imgPrefab;
-    public Sprite sampleCard;
     public GameObject cardInventory;
     public Image cardPrefab; //since card and item images will have different sizes; for test purpose, I'll still use the same sprite.
     public Transform ratioPanel;
@@ -80,11 +79,11 @@ public class MatureManager : MonoBehaviour {
     public Sprite beR;
     public SpriteRenderer eveImg;
 
-    public Sprite dia;
-    public Sprite adj;
-    public Sprite cro;
-    public Text poppedName;
-    public Text poppedDes;
+    public Sprite dia1;
+    public Sprite adj2;
+    public Sprite dia2;
+    public Sprite cro1;
+    public Sprite str3;
 
     // Use this for initialization
     void Start () {
@@ -379,11 +378,11 @@ public class MatureManager : MonoBehaviour {
         return null;
     }
     public Sprite GetCardSprite(Card card) {
-        if (card is DiagonalBy1) return dia;
-        if (card is AdjacentBy2) return adj;
-        if (card is DiagonalBy2) return dia;
-        if (card is Cross1Obstacle) return cro;
-        if (card is StraightBy3) return adj;
+        if (card is DiagonalBy1) return dia1;
+        if (card is AdjacentBy2) return adj2;
+        if (card is DiagonalBy2) return dia2;
+        if (card is Cross1Obstacle) return cro1;
+        if (card is StraightBy3) return str3;
         return null;
     }
 }
