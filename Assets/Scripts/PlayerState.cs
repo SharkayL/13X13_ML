@@ -19,7 +19,7 @@ public class PlayerState
     public int actionCount;
     public int itemsCount;
     public int maxItems;
-    int initCards = 10;
+    int initCards = 5;
     public int team;
 
     public bool lessAction = false;

@@ -42,7 +42,7 @@ public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler 
         }
         localPos = this.transform.localPosition;
         localPos.y += 10;
-        this.manager.MouseHoverCard(this.transform, localPos);
+        this.manager.MouseHoverCard(this.transform, localPos, card);
         manager.tempInfo.text = string.Format("Current Card: " + this.card.GetType().Name);
     }
 

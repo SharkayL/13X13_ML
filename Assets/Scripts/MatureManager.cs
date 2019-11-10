@@ -34,7 +34,6 @@ public class MatureManager : MonoBehaviour {
 
     public GameObject itemInventory;
     public Image imgPrefab;
-    public Sprite sword;
     public Sprite sampleCard;
     public GameObject cardInventory;
     public Image cardPrefab; //since card and item images will have different sizes; for test purpose, I'll still use the same sprite.
@@ -80,6 +79,12 @@ public class MatureManager : MonoBehaviour {
     public Sprite los1C;
     public Sprite beR;
     public SpriteRenderer eveImg;
+
+    public Sprite dia;
+    public Sprite adj;
+    public Sprite cro;
+    public Text poppedName;
+    public Text poppedDes;
 
     // Use this for initialization
     void Start () {
@@ -245,7 +250,7 @@ public class MatureManager : MonoBehaviour {
                 var key = entry.Key;
                 var obj = entry.Value;
                 int space = (560 - 10 * 2 - 110) / (player.movementCards.Count - 1);
-                obj.transform.localPosition = new Vector3(20 + space * player.CardIndex(key), -10);
+                obj.transform.localPosition = new Vector3(10 + space * player.CardIndex(key), -10);
             }
         }
         else
@@ -253,7 +258,7 @@ public class MatureManager : MonoBehaviour {
             foreach (var entry in displayedCards) {
                 var key = entry.Key;
                 var obj = entry.Value;
-                obj.transform.localPosition = new Vector3(20 + 110 * player.CardIndex(key), -10);
+                obj.transform.localPosition = new Vector3(10 + 110 * player.CardIndex(key), -10);
             }
 
         }
@@ -262,7 +267,7 @@ public class MatureManager : MonoBehaviour {
     public void DisplayCard(Card card)
     {
         Image img = Image.Instantiate(this.board.manager.cardPrefab);
-        img.sprite = this.sampleCard;
+        img.sprite = this.GetCardSprite(card);
         img.GetComponent<UICard>().card = card;
         img.transform.SetParent(this.cardInventory.transform);
         img.transform.localScale = new Vector3(1, 1, 1);
@@ -301,11 +306,14 @@ public class MatureManager : MonoBehaviour {
         }
     }
 
-    public void MouseHoverCard(Transform card, Vector3 localPos) {
+    public void MouseHoverCard(Transform card, Vector3 localPos, Card c) {
         poppedCard.transform.localPosition = localPos;
-        poppedCard.transform.GetChild(0).gameObject.SetActive(true);
+        GameObject popC = poppedCard.transform.GetChild(0).gameObject;
+        popC.SetActive(true);
         Image img = poppedCard.GetComponentInChildren<Image>();
-        img.sprite = this.sampleCard;
+        img.sprite = GetCardSprite(c);
+        popC.transform.GetChild(0).GetComponent<Text>().text = c.getName();
+        popC.transform.GetChild(1).GetComponent<Text>().text = c.getDescription();
         destroyCard = true;
     }
     private void Update()
@@ -368,6 +376,14 @@ public class MatureManager : MonoBehaviour {
         if (eve is BanninngItems) return ban1I;
         if (eve is Losing1Card) return los1C;
         if (eve is BecomingRegular) return beR;
+        return null;
+    }
+    public Sprite GetCardSprite(Card card) {
+        if (card is DiagonalBy1) return dia;
+        if (card is AdjacentBy2) return adj;
+        if (card is DiagonalBy2) return dia;
+        if (card is Cross1Obstacle) return cro;
+        if (card is StraightBy3) return adj;
         return null;
     }
 }

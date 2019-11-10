@@ -67,7 +67,8 @@ public abstract class Card
         }
         return true;
     }
-
+    public abstract string getName();
+    public abstract string getDescription();
     public static possibleCards PickRandom()
     {
         var entries = Enum.GetValues(typeof(possibleCards));
@@ -155,6 +156,14 @@ public class AdjacentBy2 : Card
         }
         return false;
     }
+    public override string getName()
+    {
+        return "Charge Ahead";
+    }
+    public override string getDescription()
+    {
+        return "Allow you to move orthoganally by 2 grids.";
+    }
 }
 
 public class DiagonalBy1 : Card
@@ -169,6 +178,14 @@ public class DiagonalBy1 : Card
             }
         }
         return false;
+    }
+    public override string getName()
+    {
+        return "Dodge Ahead";
+    }
+    public override string getDescription()
+    {
+        return "Allow you to move diagonally by 1 grid.";
     }
 }
 
@@ -187,6 +204,14 @@ public class DiagonalBy2 : Card
         }
         return false;
     }
+    public override string getName()
+    {
+        return "Flank Ahead";
+    }
+    public override string getDescription()
+    {
+        return "Allow you to move orthoganally by 2 grids.";
+    }
 }
 
 public class Cross1Obstacle : Card
@@ -201,6 +226,14 @@ public class Cross1Obstacle : Card
             }
         }
         return false;
+    }
+    public override string getName()
+    {
+        return "Wrap Ahead";
+    }
+    public override string getDescription()
+    {
+        return "Allow you to skip over 1 obstacle.";
     }
 }
 
@@ -227,5 +260,13 @@ public class StraightBy3 : Card
             
         }
         return false;
+    }
+    public override string getName()
+    {
+        return "Lead Ahead";
+    }
+    public override string getDescription()
+    {
+        return "Allow you to move orthoganally by 3 grids.";
     }
 }
