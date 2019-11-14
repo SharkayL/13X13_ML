@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: 9d1f7c5161aa040f4bc9c4a52929e8a1
+guid: 9157ba12c32f643f081e5ff9fa5b2174
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6920882504808688571
-    second: In-Game_ExtraUI_0
-  - first:
-      213: -2604062559748214869
-    second: In-Game_ExtraUI_1
-  - first:
-      213: -3071599223493713107
-    second: In-Game_ExtraUI_2
-  - first:
-      213: -1214641600475526349
-    second: In-Game_ExtraUI_3
+      213: 4501301881514069534
+    second: InGame_Menu_Guide_0
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -122,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: In-Game_ExtraUI_0
+      name: InGame_Menu_Guide_0
       rect:
         serializedVersion: 2
-        x: 46
-        y: 173
-        width: 1160
-        height: 716
+        x: 483
+        y: 206
+        width: 1012
+        height: 570
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -136,71 +127,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bec8ff9210279426795115a3a591356d
-      internalID: -6920882504808688571
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: In-Game_ExtraUI_1
-      rect:
-        serializedVersion: 2
-        x: 1239
-        y: 823
-        width: 58
-        height: 58
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 13ee83bac08b442b29eb89a6c0837aca
-      internalID: -2604062559748214869
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: In-Game_ExtraUI_2
-      rect:
-        serializedVersion: 2
-        x: 1240
-        y: 710
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 60e2c1287ada8437982a559915049334
-      internalID: -3071599223493713107
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: In-Game_ExtraUI_3
-      rect:
-        serializedVersion: 2
-        x: 56
-        y: 46
-        width: 388
-        height: 97
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 563431e7215c74405badbb3dca150521
-      internalID: -1214641600475526349
+      spriteID: 6b52032881efe4ddfbc520a5a90d3667
+      internalID: 4501301881514069534
       vertices: []
       indices: 
       edges: []
