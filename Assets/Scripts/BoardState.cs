@@ -136,7 +136,9 @@ public class BoardState {
         }
         this.NotifyPlayerTurnStarted(this.currentPlayer, null);
 
-        manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", defaultActionCount);
+        //manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", defaultActionCount);
+        //Vincent Modify
+        manager.actionsCount.text = defaultActionCount.ToString();
     }
 
     public void NextTurn()
@@ -158,6 +160,8 @@ public class BoardState {
             currentPlayer.lessAction = false;
         }
         this.NotifyPlayerTurnStarted(currentPlayer, oldPlayer);
+        //Vincent Add
+        manager.actionsCount.text = defaultActionCount.ToString();
     }
 
     public void BoardFlip() {

@@ -89,7 +89,11 @@ public class PlayerState
     public void UseAction()
     {
         --actionCount;
-        board.manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", actionCount);
+
+        //board.manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", actionCount);
+        //Vicent modify
+        board.manager.actionsCount.text = actionCount.ToString();
+
         if (actionCount <= 0)
         {
             board.manager.ghost.SetActive(false);
