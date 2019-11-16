@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Audio;
 public class MainMenu : MonoBehaviour
 {
     private static MainMenu _i;
@@ -16,6 +16,8 @@ public class MainMenu : MonoBehaviour
     public GameObject teamInfoPanel;
     public GameObject startingPanel;
     public GameObject optionPanel;
+    public AudioMixer audioMixer;
+
 
     private void Start()
     {
@@ -32,4 +34,8 @@ public class MainMenu : MonoBehaviour
         optionPanel.SetActive(b);
     }
 
+    public void SetVolume(float volume)
+    {
+        audioMixer.SetFloat("Volume", volume);
+    }
 }
