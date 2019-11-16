@@ -814,7 +814,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f37631411bc51448e87c2af18b3bb062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 1
+  panelType: 0
+  buttonType: 1
 --- !u!1 &486684871
 GameObject:
   m_ObjectHideFlags: 0
@@ -977,8 +978,8 @@ GameObject:
   - component: {fileID: 497311150}
   - component: {fileID: 497311154}
   - component: {fileID: 497311153}
-  - component: {fileID: 497311152}
   - component: {fileID: 497311151}
+  - component: {fileID: 497311152}
   m_Layer: 5
   m_Name: Play
   m_TagString: Untagged
@@ -1073,7 +1074,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f37631411bc51448e87c2af18b3bb062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 3
+  panelType: 0
+  buttonType: 3
 --- !u!114 &497311153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1338,7 +1340,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f37631411bc51448e87c2af18b3bb062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
+  panelType: 0
+  buttonType: 2
 --- !u!1 &572270032
 GameObject:
   m_ObjectHideFlags: 0
@@ -2176,8 +2179,8 @@ GameObject:
   - component: {fileID: 1131632131}
   - component: {fileID: 1131632134}
   - component: {fileID: 1131632133}
-  - component: {fileID: 1131632132}
   - component: {fileID: 1131632135}
+  - component: {fileID: 1131632132}
   m_Layer: 5
   m_Name: Start
   m_TagString: Untagged
@@ -2218,7 +2221,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f37631411bc51448e87c2af18b3bb062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  panelType: 0
+  buttonType: 0
 --- !u!114 &1131632133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2443,7 +2447,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f37631411bc51448e87c2af18b3bb062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 4
+  panelType: 0
+  buttonType: 4
 --- !u!1 &1196990844
 GameObject:
   m_ObjectHideFlags: 0
