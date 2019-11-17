@@ -62,6 +62,15 @@ public abstract class GameClient
     {
         this.Send(new PlayerUsedAction(this.clientId, messageId++, player));
     }
+
+    public void SendPlayerUsedCard(PlayerState player,Card card,GridInfo grid)
+    {
+        this.Send(new PlayerUsedCard(this.clientId, this.messageId++, player, card, grid));
+    }
+
+    public void SendPlayerUsedItem(PlayerState player, PlayerState target, Item item) {
+        this.Send(new PlayerUsedItem(this.clientId, this.messageId++, player, item, target));
+    }
     public abstract void Send(MSG msg);
 }
 

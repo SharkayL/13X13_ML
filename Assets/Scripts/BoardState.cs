@@ -6,6 +6,8 @@ using System;
 public class BoardState {
     public GridInfo[,] lightGrids = new GridInfo[13, 13];
     public GridInfo[,] darkGrids = new GridInfo[13, 13];
+    public Dictionary<int, Card> cardDatabase = new Dictionary<int, Card>();
+    public Dictionary<int, Item> itemDatabase = new Dictionary<int, Item>();
     public List<PlayerState> players = new List<PlayerState>();
     protected int nextCardId = 0;
     protected int nextItemId = 0;
@@ -19,11 +21,13 @@ public class BoardState {
     public MatureManager manager;
     public bool over = false;
     
-    public static int defaultActionCount = 2;
+    public static int defaultActionCount = 20;
 
     public Action<PlayerState,PlayerState,bool> playerTurnStart;
     public Action<PlayerState, Item,bool> playerGetsItem;
     public Action<PlayerState, Item,bool> playerLosesItem;
+    public Action<PlayerState, Card, GridInfo, bool> playerUsedCard;
+    public Action<PlayerState, PlayerState, Item, bool> playerUsedItem;
     public Action<PlayerState, Card,bool> playerGetsCard;
     public Action<PlayerState, Card,bool> playerLosesCard;
     public Action<PlayerState,bool> playerUsedAction;
@@ -58,6 +62,14 @@ public class BoardState {
         }
     }
 
+    public void NotifyPlayerUsedCard(PlayerState player,Card card,GridInfo grid,bool msg)
+    {
+        if (this.playerUsedCard != null)
+        {
+            this.playerUsedCard(player, card, grid, msg);
+        }
+    }
+
     public void NotifyPlayerUsedAction(PlayerState player,bool msg)
     {
         if(playerUsedAction != null)
@@ -78,6 +90,11 @@ public class BoardState {
         if(playerGetsItem != null)
         {
             playerGetsItem(player, item,msg);
+        }
+    }
+    public void NotifyPlayerUsedItem(PlayerState playerBy, PlayerState targetPlayer, Item item, bool msg) {
+        if (this.playerUsedItem != null) {
+            playerUsedItem(playerBy, targetPlayer, item, msg);
         }
     }
 
@@ -160,9 +177,6 @@ public class BoardState {
             players[i].InitPlayerCards();            
         }
         this.NotifyPlayerTurnStarted(this.currentPlayer, null,false);
-
-        //manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", defaultActionCount);
-        //Vincent Modify
         manager.actionsCount.text = defaultActionCount.ToString();
     }
 
@@ -212,12 +226,12 @@ public class BoardState {
 
     public Card GetCardById(int id)
     {
-        return null;
+        return cardDatabase[id];
     }
 
     public Item GetItemById(int id)
     {
-        return null;
+        return itemDatabase[id];
     }
 
     public PlayerState GetPlayer(int number)

@@ -87,14 +87,18 @@ public class PlayerState
         }
     } 
 
-    public void Move(GridInfo grid,bool msg = true)
+    public void Move(GridInfo grid,bool msg = false)
     {
         var oldCell = this.currentCell;
         this.currentCell = grid;
-        this.board.NotifyPlayerMoved(this, oldCell, grid,msg);
+        this.board.NotifyPlayerMoved(this, oldCell, grid, msg);
+        if (grid.exit)
+        {
+            board.NotifyGameover(this.team);
+        }
     }
 
-    public void UseAction(bool msg = true)
+    public void UseAction(bool msg = false)
     {
         --actionCount;
 

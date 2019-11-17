@@ -26,10 +26,16 @@ public abstract class Item
     public Item(BoardState board) {
         this.board = board;
         this.id = board.NextItemId();
+        board.itemDatabase.Add(this.id, this);
     }
     public abstract bool canPlay(PlayerState playedBy, PlayerState targetPlayer); // highlight the grid
 
-    public abstract bool play(PlayerState playedBy, PlayerState targetPlayer);
+    public virtual bool play(PlayerState playedBy, PlayerState targetPlayer,bool msg = false)
+    {
+        this.board.NotifyPlayerUsedItem(playedBy,targetPlayer, this, msg);
+        board.currentPlayer.DiscardItem(this);
+        return false;
+    }
 
     public abstract string getName();
     public abstract string getDescription();
@@ -89,10 +95,11 @@ public class MagnetRed : Item {
         else // nothing will happen.
             return false;
     }
-    public override bool play(PlayerState playedBy, PlayerState targetPlayer)
+    public override bool play(PlayerState playedBy, PlayerState targetPlayer,bool msg = false)
     {
         if (canPlay(playedBy, targetPlayer))
         {
+            base.play(playedBy, targetPlayer, msg);
             foreach (var item in targetPlayer.items) {
                 if (item is MagnetRed) {
                     targetPlayer.DiscardItem(item);
@@ -142,10 +149,11 @@ public class MagnetBlue : Item
         else // nothing will happen.
             return false;
     }
-    public override bool play(PlayerState playedBy, PlayerState targetPlayer)
+    public override bool play(PlayerState playedBy, PlayerState targetPlayer,bool msg=false)
     {
         if (canPlay(playedBy, targetPlayer))
         {
+            base.play(playedBy, targetPlayer, msg);
             foreach (var item in targetPlayer.items)
             {
                 if (item is MagnetBlue)
@@ -190,10 +198,11 @@ public class LongArm : Item {
         return false;
     }
 
-    public override bool play(PlayerState playedBy, PlayerState targetPlayer)
+    public override bool play(PlayerState playedBy, PlayerState targetPlayer,bool msg = false)
     {
         if (canPlay(playedBy, targetPlayer))
         {
+            base.play(playedBy, targetPlayer, msg);
             Item discarded = targetPlayer.PickRandomItem();
             targetPlayer.DiscardItem(discarded);
             playedBy.AddItem(discarded);
@@ -229,10 +238,11 @@ public class LongMug : Item
             return false;
     }
 
-    public override bool play(PlayerState playedBy, PlayerState targetPlayer)
+    public override bool play(PlayerState playedBy, PlayerState targetPlayer,bool msg = false)
     {
         if (canPlay(playedBy, targetPlayer))
         {
+            base.play(playedBy, targetPlayer, msg);
             Item discardedT = targetPlayer.PickRandomItem();
             Item discardedP = playedBy.PickRandomItem();
             targetPlayer.DiscardItem(discardedT);
@@ -270,10 +280,11 @@ public class Blade : Item
             return false;
     }
 
-    public override bool play(PlayerState playedBy, PlayerState targetPlayer)
+    public override bool play(PlayerState playedBy, PlayerState targetPlayer,bool msg = false)
     {
         if (canPlay(playedBy, targetPlayer))
         {
+            base.play(playedBy, targetPlayer, msg);
             GridInfo currentPos = playedBy.currentCell;
             playedBy.currentCell = targetPlayer.currentCell;
             targetPlayer.currentCell = currentPos;

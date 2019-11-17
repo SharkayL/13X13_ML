@@ -34,10 +34,10 @@ public class PlayerMoved : MSG {
     }    
 }
 [System.Serializable]
-public class PlayerUsedCard : MSG
+public class PlayerUsedCard : PlayerMoved
 {
     public int cardId;
-    public PlayerUsedCard(int clientId, int id, PlayerState player, Card card) : base(clientId, id)
+    public PlayerUsedCard(int clientId, int id, PlayerState player, Card card,GridInfo grid) : base(clientId, id,player,grid)
     {
         this.cardId = card.id;
     }

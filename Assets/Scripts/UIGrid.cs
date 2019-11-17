@@ -11,6 +11,10 @@ public void OnPointerClick(PointerEventData eventData)
     {
         var board = info.board;
         var player = board.currentPlayer;
+        if (board.manager.displayPlayerId != -1 && board.currentPlayer.id != board.manager.displayPlayerId)
+        {
+            return;
+        }
         if (board.over) {
             return;
         }
@@ -21,17 +25,13 @@ public void OnPointerClick(PointerEventData eventData)
             //}
             if (Card.Ajacent1Check(player, info)) {
                 //player.currentCell = info;
-                player.Move(info);
-                if (info.exit)
-                {
-                    board.NotifyGameover(player.team);
-                }
-                player.UseAction();
+                player.Move(info,true);
+                player.UseAction(true);
                 return;
             }
             if (player.playingCard != null)
             {
-                if (player.playingCard.move(player, info)){
+                if (player.playingCard.move(player, info,true)){
                     board.manager.instruction.text = "You moved to a new position";
                     Debug.Log("moved");
                 }

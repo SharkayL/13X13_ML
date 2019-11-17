@@ -12,6 +12,9 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (manager.displayPlayerId != -1 && manager.board.currentPlayer.id != manager.displayPlayerId) {
+            return;
+        }
         if (manager.board.over) {
             return;
         }
@@ -44,9 +47,8 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
             this.transform.SetParent(parent);
             PlayerState targetPlayer = manager.DroppedOnPlayer();
             if (targetPlayer != null) {
-                if (item.play(manager.board.currentPlayer, targetPlayer))
+                if (item.play(manager.board.currentPlayer, targetPlayer, true))
                 {
-                    manager.board.currentPlayer.DiscardItem(item);
                     manager.instruction.text = "current player used " + item.GetType().Name + " on target player.";
                     //Debug.Log("current player used " + item.GetType().Name + " on target player." );
                 }

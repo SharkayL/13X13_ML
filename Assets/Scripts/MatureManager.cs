@@ -12,7 +12,7 @@ public enum GameStart
 }
 
 public class MatureManager : MonoBehaviour {
-    #region
+    #region Visual objects
     public BoardState board;
     public GameObject cellPrefab;
     int gridSize = 70;
@@ -92,16 +92,20 @@ public class MatureManager : MonoBehaviour {
     public Sprite dia2;
     public Sprite cro1;
     public Sprite str3;
-    #endregion
+    #endregion 
 
     protected GameClient client;
 
     public static GameStart startType = GameStart.server;
     public static string serverIp = "127.0.0.1";
+    public static int playerID = -1;
+
+    public int displayPlayerId;
 
     // Use this for initialization
     void Start () {
-		board = new BoardState();       
+		board = new BoardState();
+        this.displayPlayerId = MatureManager.playerID;
         board.cellPrefab = cellPrefab;
         board.parent = parent;
         board.manager = this;
@@ -125,12 +129,25 @@ public class MatureManager : MonoBehaviour {
             return false;
         };
 
+        this.board.playerUsedCard = (player, card, grid, msg) =>
+        {
+            if(client != null && msg)
+            {
+                client.SendPlayerUsedCard(player, card, grid);
+            }
+        };
+        this.board.playerUsedItem = (player, target, item, msg) => {
+            if(client != null && msg)
+            {
+                client.SendPlayerUsedItem(player, target, item);
+            }
+        };
         this.board.playerGetsItem = (player, item,msg) =>
         {
             if (player != board.currentPlayer) {
                 return;
             }
-            DisplayItem(item);
+            DisplayItem(player,item);
         };
         this.board.playerGetsCard = (player, card,msg) =>
         {
@@ -138,9 +155,9 @@ public class MatureManager : MonoBehaviour {
             {
                 return;
             }
-            DisplayCard(card);
+            DisplayCard(player,card);
         };
-        this.board.playerLosesCard = (player, card,msg) =>
+        this.board.playerLosesCard = (player, card, msg) =>
         {
             Image image = null;
             displayedCards.TryGetValue(card, out image);
@@ -151,7 +168,7 @@ public class MatureManager : MonoBehaviour {
                 ArrangeCard(player, displayedCards);
             }
         };
-        this.board.playerLosesItem = (player, item,msg) =>
+        this.board.playerLosesItem = (player, item, msg) =>
         {
             Image image = null;
             displayedItems.TryGetValue(item, out image);
@@ -192,8 +209,20 @@ public class MatureManager : MonoBehaviour {
             nextPlayer3.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 3) % board.players.Count];
             if(oldPlayer != null)
             {
-                UpdateDisplayedCards(newPlayer);
-                UpdateDisplayedItems(newPlayer);
+                if(displayPlayerId == -1)
+                {
+                    UpdateDisplayedCards(newPlayer);
+                    UpdateDisplayedItems(newPlayer);
+                }
+            }
+            else
+            {
+                if(displayPlayerId != -1)
+                {
+                    var player = board.GetPlayerById(displayPlayerId);
+                    UpdateDisplayedCards(player);
+                    UpdateDisplayedItems(player);
+                }
             }
             instruction.text = defaultText;
             itemName.text = null;
@@ -217,7 +246,15 @@ public class MatureManager : MonoBehaviour {
         while(this.client.pending.Count != 0)
         {
             var message = this.client.pending.Take();
-            if(message is PlayerMoved)
+            if(message is PlayerUsedCard)
+            {
+                var playedCard = (PlayerUsedCard)message;
+                var player = board.GetPlayerById(playedCard.playerNo);
+                var gridlet = board.GetGrid(playedCard.col, playedCard.row);
+                var card = board.GetCardById(playedCard.cardId);
+                card.move(player, gridlet,false);
+            }
+            else if(message is PlayerMoved)
             {
                 var playerMoved = (PlayerMoved)message;
                 var player = board.GetPlayerById(playerMoved.playerNo);
@@ -225,12 +262,18 @@ public class MatureManager : MonoBehaviour {
                 //player.currentCell = gridlet;
                 player.Move(gridlet, false);
             }
-            if(message is PlayerUsedAction)
+            else if(message is PlayerUsedAction)
             {
                 var playerMsg = (PlayerUsedAction)message;
                 board.GetPlayerById(playerMsg.playerNo).UseAction(false);
             }
-
+            else if (message is PlayerUsedItem) {
+                var usedItem = (PlayerUsedItem)message;
+                var player = board.GetPlayerById(usedItem.playerId);
+                var target = board.GetPlayerById(usedItem.targetId);
+                var item = board.GetItemById(usedItem.itemId);
+                item.play(player, target, false);
+            }
         }
     }
 
@@ -311,6 +354,10 @@ public class MatureManager : MonoBehaviour {
         poppedCard.transform.GetChild(0).gameObject.SetActive(false);
     }
     public void ArrangeCard(PlayerState player, Dictionary<Card, Image> displayedCards) {
+        if (displayPlayerId != -1 && displayPlayerId != player.id)
+        {
+            return;
+        }
         if (player.movementCards.Count > 5)
         {
             foreach (var entry in displayedCards)
@@ -332,18 +379,26 @@ public class MatureManager : MonoBehaviour {
         }
     }
 
-    public void DisplayCard(Card card)
+    public void DisplayCard(PlayerState player,Card card)
     {
+        if(displayPlayerId != -1 && displayPlayerId != player.id)
+        {
+            return;
+        } 
         Image img = Image.Instantiate(this.board.manager.cardPrefab);
         img.sprite = this.GetCardSprite(card);
         img.GetComponent<UICard>().card = card;
         img.transform.SetParent(this.cardInventory.transform);
         img.transform.localScale = new Vector3(1, 1, 1);
         displayedCards.Add(card, img);
-        ArrangeCard(board.currentPlayer, displayedCards);
+        ArrangeCard(player, displayedCards);
         img.GetComponent<UICard>().manager = this;
     }
-    public void DisplayItem(Item item) {
+    public void DisplayItem(PlayerState player,Item item) {
+        if (displayPlayerId != -1 && displayPlayerId != player.id)
+        {
+            return;
+        }
         Image img = Image.Instantiate(this.board.manager.imgPrefab);
         img.sprite = GetItemSprite(item);
         img.transform.SetParent(this.itemInventory.transform);
@@ -359,7 +414,7 @@ public class MatureManager : MonoBehaviour {
         }
         displayedCards.Clear();
         foreach (var card in currentPlayer.movementCards) {
-            DisplayCard(card);
+            DisplayCard(currentPlayer,card);
         }
     }
     public void UpdateDisplayedItems(PlayerState currentPlayer) {
@@ -370,7 +425,7 @@ public class MatureManager : MonoBehaviour {
         displayedItems.Clear();
         foreach (var item in currentPlayer.items)
         {
-            DisplayItem(item);
+            DisplayItem(currentPlayer,item);
         }
     }
 

@@ -25,6 +25,7 @@ public abstract class Card
     {
         this.board = board;
         this.id = board.NextCardId();
+        board.cardDatabase.Add(this.id,this);
     }
 
     public static bool baseCheck(PlayerState playedBy, GridInfo moveTo)
@@ -52,17 +53,15 @@ public abstract class Card
     }
     public abstract bool canMove(PlayerState playedBy, GridInfo moveTo);
 
-    public bool move(PlayerState playedBy, GridInfo moveTo)
+    public bool move(PlayerState playedBy, GridInfo moveTo,bool msg = false)
     {
         if (!canMove(playedBy, moveTo))
         {
             return false;
         }
+        this.board.NotifyPlayerUsedCard(playedBy, this, moveTo, msg);
         //playedBy.currentCell = moveTo;
         playedBy.Move(moveTo);
-        if (moveTo.exit) {
-            board.NotifyGameover(playedBy.team);
-        }
         playedBy.DiscardCard(this);
         playedBy.UseAction();
         if (playedBy.ghost)
