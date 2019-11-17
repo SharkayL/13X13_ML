@@ -4,7 +4,15 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum GameStart
+{
+    single,
+    server,
+    client
+}
+
 public class MatureManager : MonoBehaviour {
+    #region
     public BoardState board;
     public GameObject cellPrefab;
     int gridSize = 70;
@@ -84,6 +92,12 @@ public class MatureManager : MonoBehaviour {
     public Sprite dia2;
     public Sprite cro1;
     public Sprite str3;
+    #endregion
+
+    protected GameClient client;
+
+    public static GameStart startType = GameStart.server;
+    public static string serverIp = "127.0.0.1";
 
     // Use this for initialization
     void Start () {
@@ -100,21 +114,25 @@ public class MatureManager : MonoBehaviour {
             winText.text = "Team " + team + " wins!";
         };
 
-        this.board.playerMoves = (player, from, to) =>
+        this.board.playerMoves = (player, from, to,msg) =>
         {
+            if(client != null && msg)
+            {
+                client.SendPlayerMoved(player, to);
+            }
             //Debug.Log("Player Moved");
             //animation maybe;
             return false;
         };
 
-        this.board.playerGetsItem = (player, item) =>
+        this.board.playerGetsItem = (player, item,msg) =>
         {
             if (player != board.currentPlayer) {
                 return;
             }
             DisplayItem(item);
         };
-        this.board.playerGetsCard = (player, card) =>
+        this.board.playerGetsCard = (player, card,msg) =>
         {
             if(player != board.currentPlayer)
             {
@@ -122,7 +140,7 @@ public class MatureManager : MonoBehaviour {
             }
             DisplayCard(card);
         };
-        this.board.playerLosesCard = (player, card) =>
+        this.board.playerLosesCard = (player, card,msg) =>
         {
             Image image = null;
             displayedCards.TryGetValue(card, out image);
@@ -133,7 +151,7 @@ public class MatureManager : MonoBehaviour {
                 ArrangeCard(player, displayedCards);
             }
         };
-        this.board.playerLosesItem = (player, item) =>
+        this.board.playerLosesItem = (player, item,msg) =>
         {
             Image image = null;
             displayedItems.TryGetValue(item, out image);
@@ -142,14 +160,20 @@ public class MatureManager : MonoBehaviour {
                 displayedItems.Remove(item);
             }
         };
-        this.board.PlayerTriggersEve = (player, eve) => {
+        this.board.PlayerTriggersEve = (player, eve,msg) => {
             //Debug.Log(eve.GetType().Name);
             DisplayEve(eve);          
             eveText.text = "You trigered Event: " + eve.GetType().Name;
-            //Displaying icon on top of player;
+        };
+        this.board.playerUsedAction = (player,msg) =>
+        {
+            if (client != null && msg)
+            {
+                client.SendPlayerUsedAction(player);
+            }
         };
 
-        this.board.playerTurnStart = (newPlayer, oldPlayer) =>
+        this.board.playerTurnStart = (newPlayer, oldPlayer,msg) =>
         {
             currentPlayer.sprite = playerSprites[board.currentTurn % board.players.Count];
             //status.text = "is ghost? " + board.currentPlayer.ghost;            
@@ -175,9 +199,54 @@ public class MatureManager : MonoBehaviour {
             itemName.text = null;
             itemDescrib.text = null;
         };
-        board.Init();
+        //board.Init();
         temp.GetComponent<Button>().onClick.AddListener(() => SkipAction());
         hide.GetComponent<Button>().onClick.AddListener(() => HideInventory());
+        if(MatureManager.startType == GameStart.server)
+        {
+            StartServer();
+        }
+        else if(MatureManager.startType == GameStart.client)
+        {
+            JoinServer(MatureManager.serverIp);
+        }
+    }
+
+    public void PullMessages()
+    {
+        while(this.client.pending.Count != 0)
+        {
+            var message = this.client.pending.Take();
+            if(message is PlayerMoved)
+            {
+                var playerMoved = (PlayerMoved)message;
+                var player = board.GetPlayerById(playerMoved.playerNo);
+                var gridlet = board.GetGrid(playerMoved.col,playerMoved.row);
+                //player.currentCell = gridlet;
+                player.Move(gridlet, false);
+            }
+            if(message is PlayerUsedAction)
+            {
+                var playerMsg = (PlayerUsedAction)message;
+                board.GetPlayerById(playerMsg.playerNo).UseAction(false);
+            }
+
+        }
+    }
+
+    public void StartServer()
+    {
+        board.Init(42);
+        var server = new Server(board);
+        server.Start();
+        this.client = server;
+    }
+
+    public async void JoinServer(string ip)
+    {
+        var client = new Client();
+        await client.JoinGame(ip,this.board);
+        this.client = client;
     }
 
     public void SkipAction() {
@@ -317,6 +386,10 @@ public class MatureManager : MonoBehaviour {
     }
     private void Update()
     {
+        if (this.client != null)
+        {
+            this.PullMessages();
+        }
         if (destroyCard) {
             t += Time.deltaTime;
             if (t >= 3) {

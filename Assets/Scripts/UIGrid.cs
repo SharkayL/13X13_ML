@@ -20,7 +20,8 @@ public void OnPointerClick(PointerEventData eventData)
             //    player.playingCard = Card.Convert(possibleCards.adjacentBy1);
             //}
             if (Card.Ajacent1Check(player, info)) {
-                player.currentCell = info;
+                //player.currentCell = info;
+                player.Move(info);
                 if (info.exit)
                 {
                     board.NotifyGameover(player.team);

@@ -7,6 +7,8 @@ public class BoardState {
     public GridInfo[,] lightGrids = new GridInfo[13, 13];
     public GridInfo[,] darkGrids = new GridInfo[13, 13];
     public List<PlayerState> players = new List<PlayerState>();
+    protected int nextCardId = 0;
+    protected int nextItemId = 0;
     List<Item> items;
     public bool isLight = true;
     public int currentTurn = 0;
@@ -19,68 +21,89 @@ public class BoardState {
     
     public static int defaultActionCount = 2;
 
-    public Action<PlayerState,PlayerState> playerTurnStart;
-    public Action<PlayerState, Item> playerGetsItem;
-    public Action<PlayerState, Item> playerLosesItem;
-    public Action<PlayerState, Card> playerGetsCard;
-    public Action<PlayerState, Card> playerLosesCard;
-    public Func<PlayerState, GridInfo, GridInfo, bool> playerMoves;
-    public Action<PlayerState, EventToken> PlayerTriggersEve;
+    public Action<PlayerState,PlayerState,bool> playerTurnStart;
+    public Action<PlayerState, Item,bool> playerGetsItem;
+    public Action<PlayerState, Item,bool> playerLosesItem;
+    public Action<PlayerState, Card,bool> playerGetsCard;
+    public Action<PlayerState, Card,bool> playerLosesCard;
+    public Action<PlayerState,bool> playerUsedAction;
+    public Func<PlayerState, GridInfo, GridInfo, bool,bool> playerMoves;
+    public Action<PlayerState, EventToken,bool> PlayerTriggersEve;
     public Action<int> teamWins;
+    public System.Random random;
+    public int randomSeed;
 
-    public void NotifyGameover(int team) {
+    public int NextCardId()
+    {
+        return nextCardId++;
+    }
+
+    public int NextItemId()
+    {
+        return nextItemId++;
+    }
+
+    public void NotifyGameover(int team,bool msg=true) {
         if (teamWins != null) {
             over = true;
             teamWins(team);
         }
     }
 
-    public void NotifyPlayerTurnStarted(PlayerState newPlayer,PlayerState oldPlayer)
+    public void NotifyPlayerTurnStarted(PlayerState newPlayer,PlayerState oldPlayer,bool msg)
     {
         if(playerTurnStart != null)
         {
-            playerTurnStart(newPlayer, oldPlayer);
+            playerTurnStart(newPlayer, oldPlayer,msg);
         }
     }
 
-    public void NotifyPlayerMoved(PlayerState player,GridInfo from,GridInfo to)
+    public void NotifyPlayerUsedAction(PlayerState player,bool msg)
+    {
+        if(playerUsedAction != null)
+        {
+            playerUsedAction(player,msg);
+        }
+    }
+
+    public void NotifyPlayerMoved(PlayerState player,GridInfo from,GridInfo to,bool msg)
     {
         if(playerMoves != null)
         {
-            playerMoves(player,from,to);
+            playerMoves(player,from,to,msg);
         }
     }
 
-    public void NotifyItemGotten(PlayerState player, Item item) {
+    public void NotifyItemGotten(PlayerState player, Item item,bool msg) {
         if(playerGetsItem != null)
         {
-            playerGetsItem(player, item);
+            playerGetsItem(player, item,msg);
         }
     }
 
-    public void NotifyItemLost(PlayerState player, Item item) {
+    public void NotifyItemLost(PlayerState player, Item item,bool msg) {
         if (playerLosesItem != null) {
-            playerLosesItem(player, item);
+            playerLosesItem(player, item,msg);
         }
     }
 
-    public void NotifyCardGotten(PlayerState player, Card card) {
+    public void NotifyCardGotten(PlayerState player, Card card,bool msg) {
         if (playerGetsCard != null) {
-            playerGetsCard(player, card);
+            playerGetsCard(player, card,msg);
         }
     }
 
-    public void NotifyCardLost(PlayerState player, Card card) {
+    public void NotifyCardLost(PlayerState player, Card card,bool msg) {
         if (playerLosesCard != null)
         {
-            playerLosesCard(player, card);
+            playerLosesCard(player, card,msg);
         }
     }
 
-    public void NotifyEventHappened(PlayerState player, EventToken eve) {
+    public void NotifyEventHappened(PlayerState player, EventToken eve,bool msg) {
         if(PlayerTriggersEve != null)
         {
-            PlayerTriggersEve(player, eve);
+            PlayerTriggersEve(player, eve,msg);
         }
     }
 
@@ -99,10 +122,12 @@ public class BoardState {
         return GetGrid(place.col, place.row);
     }
 
-    public void Init() {
+    public void Init(int seed) {
+        this.randomSeed = seed;
+        this.random = new System.Random(seed);
         for(int i = 0; i < 4; ++i)
         {
-            players.Add(new PlayerState(this));
+            players.Add(new PlayerState(this,i));
         }
         
         currentPlayer = players[0];
@@ -134,7 +159,7 @@ public class BoardState {
             players[i].team = (int)i % 2;
             players[i].InitPlayerCards();            
         }
-        this.NotifyPlayerTurnStarted(this.currentPlayer, null);
+        this.NotifyPlayerTurnStarted(this.currentPlayer, null,false);
 
         //manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", defaultActionCount);
         //Vincent Modify
@@ -159,7 +184,7 @@ public class BoardState {
             currentPlayer.UseAction();
             currentPlayer.lessAction = false;
         }
-        this.NotifyPlayerTurnStarted(currentPlayer, oldPlayer);
+        this.NotifyPlayerTurnStarted(currentPlayer, oldPlayer,true);
         //Vincent Add
         manager.actionsCount.text = defaultActionCount.ToString();
     }
@@ -178,6 +203,21 @@ public class BoardState {
 
     public int CurrentPlayerNumber(int currentTurn) {
         return players.IndexOf(currentPlayer) + 1;
+    }
+
+    public PlayerState GetPlayerById(int id)
+    {
+        return players[id];
+    }
+
+    public Card GetCardById(int id)
+    {
+        return null;
+    }
+
+    public Item GetItemById(int id)
+    {
+        return null;
     }
 
     public PlayerState GetPlayer(int number)

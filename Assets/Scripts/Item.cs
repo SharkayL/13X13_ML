@@ -20,7 +20,13 @@ public enum PossibleItems
 public abstract class Item
 {
     //public GameObject itemToken;
+    public int id;
+    public BoardState board;
 
+    public Item(BoardState board) {
+        this.board = board;
+        this.id = board.NextItemId();
+    }
     public abstract bool canPlay(PlayerState playedBy, PlayerState targetPlayer); // highlight the grid
 
     public abstract bool play(PlayerState playedBy, PlayerState targetPlayer);
@@ -28,37 +34,38 @@ public abstract class Item
     public abstract string getName();
     public abstract string getDescription();
 
-    public static PossibleItems PickRandom()
+    public static PossibleItems PickRandom(BoardState board)
     {
         var entries = Enum.GetValues(typeof(PossibleItems));
-        var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
+        var index = board.random.Next(0, entries.Length);
+        //var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
         return (PossibleItems)entries.GetValue(index);
     }
 
-    public static Item Init(PossibleItems item)
+    public static Item Init(BoardState board, PossibleItems item)
     {
         if (item == PossibleItems.magnetRed) {
-            return new MagnetRed();
+            return new MagnetRed(board);
         }
         if (item == PossibleItems.magnetBlue)
         {
-            return new MagnetBlue();
+            return new MagnetBlue(board);
         }
         if (item == PossibleItems.longArm) {
-            return new LongArm();
+            return new LongArm(board);
         }
         if (item == PossibleItems.longMug) {
-            return new LongMug();
+            return new LongMug(board);
         }
         if (item == PossibleItems.blade) {
-            return new Blade();
+            return new Blade(board);
         }
         return null;
     }
 
-    public static Item PickRandomObj()
+    public static Item PickRandomObj(BoardState board)
     {
-        return Init(PickRandom());
+        return Init(board, PickRandom(board));
     }
 
     //public abstract GameObject DisplayItem(MatureManager manager);
@@ -69,6 +76,10 @@ public abstract class Item
 }
 
 public class MagnetRed : Item {
+    public MagnetRed(BoardState board) : base(board)
+    {
+    }
+
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
         if (targetPlayer != null && targetPlayer.movementCards.Count > 0)
@@ -118,6 +129,10 @@ public class MagnetRed : Item {
 }
 public class MagnetBlue : Item
 {
+    public MagnetBlue(BoardState board) : base(board)
+    {
+    }
+
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
         if (targetPlayer != null && targetPlayer.movementCards.Count > 0)
@@ -161,6 +176,10 @@ public class MagnetBlue : Item
 }
 
 public class LongArm : Item {
+    public LongArm(BoardState board) : base(board)
+    {
+    }
+
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
         if (targetPlayer != null && targetPlayer.items.Count > 0)
@@ -196,6 +215,10 @@ public class LongArm : Item {
 
 public class LongMug : Item
 {
+    public LongMug(BoardState board) : base(board)
+    {
+    }
+
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
         if (targetPlayer != null && targetPlayer.items.Count > 0)
@@ -233,6 +256,10 @@ public class LongMug : Item
 }
 public class Blade : Item
 {
+    public Blade(BoardState board) : base(board)
+    {
+    }
+
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
         if (targetPlayer != null && !targetPlayer.ghost)
@@ -250,7 +277,7 @@ public class Blade : Item
             GridInfo currentPos = playedBy.currentCell;
             playedBy.currentCell = targetPlayer.currentCell;
             targetPlayer.currentCell = currentPos;
-            playedBy.UseAction();
+            playedBy.UseAction(false);
             return true;
         }
         else

@@ -17,8 +17,15 @@ public enum possibleCards
 public abstract class Card
 {
     //public Image displayImg;
+    public int id;
     public PlayerState heldBy;
     public BoardState board;
+
+    public Card(BoardState board)
+    {
+        this.board = board;
+        this.id = board.NextCardId();
+    }
 
     public static bool baseCheck(PlayerState playedBy, GridInfo moveTo)
     {
@@ -51,7 +58,8 @@ public abstract class Card
         {
             return false;
         }
-        playedBy.currentCell = moveTo;
+        //playedBy.currentCell = moveTo;
+        playedBy.Move(moveTo);
         if (moveTo.exit) {
             board.NotifyGameover(playedBy.team);
         }
@@ -69,14 +77,15 @@ public abstract class Card
     }
     public abstract string getName();
     public abstract string getDescription();
-    public static possibleCards PickRandom()
+    public static possibleCards PickRandom(BoardState state)
     {
         var entries = Enum.GetValues(typeof(possibleCards));
-        var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
+        var index = state.random.Next(0, entries.Length);
+        //var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
         return (possibleCards)entries.GetValue(index);
     }
 
-    public static Card Init(possibleCards card)
+    public static Card Init(BoardState board,possibleCards card)
     {
         //if (card == possibleCards.adjacentBy1)
         //{
@@ -85,28 +94,28 @@ public abstract class Card
         //else 
         if (card == possibleCards.adjacentBy2)
         {
-            return new AdjacentBy2();
+            return new AdjacentBy2(board);
         }
         else if (card == possibleCards.diagonalBy1)
         {
-            return new DiagonalBy1();
+            return new DiagonalBy1(board);
         }
         else if (card == possibleCards.diagonalBy2)
         {
-            return new DiagonalBy2();
+            return new DiagonalBy2(board);
         }
         else if (card == possibleCards.cross1Obstacle)
         {
-            return new Cross1Obstacle();
+            return new Cross1Obstacle(board);
         }
         else if (card == possibleCards.straightBy3) {
-            return new StraightBy3();
+            return new StraightBy3(board);
         }
         return null;
     }
-    public static Card PickRandomObj()
+    public static Card PickRandomObj(BoardState board)
     {
-        return Init(PickRandom());
+        return Init(board,PickRandom(board));
     }
     public static bool LineCheck(int x, int y, int dis)
     {
@@ -142,6 +151,10 @@ public abstract class Card
 
 public class AdjacentBy2 : Card
 {
+    public AdjacentBy2(BoardState board) : base(board)
+    {
+    }
+
     public override bool canMove(PlayerState playedBy, GridInfo moveTo)
     {
         if (Card.baseCheck(playedBy, moveTo))
@@ -168,6 +181,10 @@ public class AdjacentBy2 : Card
 
 public class DiagonalBy1 : Card
 {
+    public DiagonalBy1(BoardState board) : base(board)
+    {
+    }
+
     public override bool canMove(PlayerState playedBy, GridInfo moveTo)
     {
         if (Card.baseCheck(playedBy, moveTo))
@@ -191,6 +208,10 @@ public class DiagonalBy1 : Card
 
 public class DiagonalBy2 : Card
 {
+    public DiagonalBy2(BoardState board) : base(board)
+    {
+    }
+
     public override bool canMove(PlayerState playedBy, GridInfo moveTo)
     {
         if (Card.baseCheck(playedBy, moveTo))
@@ -216,6 +237,10 @@ public class DiagonalBy2 : Card
 
 public class Cross1Obstacle : Card
 {
+    public Cross1Obstacle(BoardState board) : base(board)
+    {
+    }
+
     public override bool canMove(PlayerState playedBy, GridInfo moveTo)
     {
         if (Card.baseCheck(playedBy, moveTo))
@@ -239,6 +264,10 @@ public class Cross1Obstacle : Card
 
 public class StraightBy3 : Card
 {
+    public StraightBy3(BoardState board) : base(board)
+    {
+    }
+
     public override bool canMove(PlayerState playedBy, GridInfo moveTo)
     {
         if (Card.baseCheck(playedBy, moveTo))

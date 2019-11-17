@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class PlayerState
 {
+    public int id;
     private GridInfo _currentCell;
     public List<Item> items = new List<Item>();
     public List<Card> movementCards = new List<Card>();
@@ -25,8 +26,9 @@ public class PlayerState
     public bool lessAction = false;
     public bool noItem = false;
 
-    public PlayerState(BoardState board)
+    public PlayerState(BoardState board,int id)
     {
+        this.id = id;
         this.board = board;
     }
 
@@ -57,7 +59,6 @@ public class PlayerState
                 value.player = this;
                 var oldCell = _currentCell;
                 _currentCell = value;
-                this.board.NotifyPlayerMoved(this, oldCell, value);
                 if (value.containsEve)
                 {
                     TriggerRandomEvent();
@@ -81,17 +82,25 @@ public class PlayerState
 
     public void InitPlayerCards() {
         for (int i = 0; i < initCards; ++i) {
-            Card card = Card.PickRandomObj();
+            Card card = Card.PickRandomObj(this.board);
             AddCard(card);
         }
     } 
 
-    public void UseAction()
+    public void Move(GridInfo grid,bool msg = true)
+    {
+        var oldCell = this.currentCell;
+        this.currentCell = grid;
+        this.board.NotifyPlayerMoved(this, oldCell, grid,msg);
+    }
+
+    public void UseAction(bool msg = true)
     {
         --actionCount;
 
         //board.manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", actionCount);
         //Vicent modify
+        board.NotifyPlayerUsedAction(this,msg);
         board.manager.actionsCount.text = actionCount.ToString();
 
         if (actionCount <= 0)
@@ -111,7 +120,8 @@ public class PlayerState
     
     public Card PickRandomCard()
     {
-        int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.movementCards.Count));
+        //int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.movementCards.Count));
+        var index = board.random.Next(1, this.movementCards.Count);
         var card = movementCards[index - 1];
         //Debug.Log(card.GetType().Name);
         return card;
@@ -119,20 +129,21 @@ public class PlayerState
 
     public Item PickRandomItem()
     {
-        int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.items.Count));
+        //int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.items.Count));
+        var index = board.random.Next(1, this.items.Count);
         var item = items[index - 1];
         return item;
     }
 
-    public void AddRandomCard() {
-        this.AddCard(Card.PickRandomObj());
+    public void AddRandomCard(bool msg=false) {
+        this.AddCard(Card.PickRandomObj(this.board),msg);
     }
 
-    public void AddCard(Card card) {
+    public void AddCard(Card card,bool msg=false) {
         card.heldBy = this;
         card.board = this.board;
         movementCards.Add(card);
-        board.NotifyCardGotten(this, card);
+        board.NotifyCardGotten(this, card,msg);
         //Debug.Log(card.GetType().Name);
     }
         
@@ -141,42 +152,47 @@ public class PlayerState
         return this.movementCards.IndexOf(card);
     }
 
-    public void AddRandomItem() {
-        this.AddItem(Item.PickRandomObj());
+    public void AddRandomItem(bool msg=false) {
+        this.AddItem(Item.PickRandomObj(this.board),msg);
     }
 
-    public void AddItem(Item item)
+    public void AddItem(Item item,bool msg=false)
     {
         if (board.manager)
         {
             //var obj = item.DisplayItem(this.board.manager);
             //this.board.manager.itemAdded(obj, this.board.manager.itemInventory);            
         }
-        this.board.NotifyItemGotten(this, item);
+        this.board.NotifyItemGotten(this, item,msg);
         
         items.Add(item);
         Debug.Log(item.GetType().Name);
     }
 
-    public void TriggerRandomEvent()
+    public void TriggerRandomEvent(bool msg=false)
     {
-        EventToken eve = EventToken.Init(EventToken.PickRandom());
-        if (eve.canEffect(this)) {
-            board.NotifyEventHappened(this, eve);
+        while (true)
+        {
+            EventToken eve = EventToken.Init(EventToken.PickRandom(this.board));
+            if (eve.canEffect(this))
+            {
+                board.NotifyEventHappened(this, eve, msg);
+                return;
+            }
         }
     }
 
-    public void DiscardCard(Card card) {
+    public void DiscardCard(Card card,bool msg=false) {
         if(playingCard == card)
         {
             playingCard = null;
         }
         movementCards.Remove(card);
-        board.NotifyCardLost(this, card);
+        board.NotifyCardLost(this, card,msg);
     }
-    public void DiscardItem(Item item) {
+    public void DiscardItem(Item item,bool msg=false) {
         items.Remove(item);
-        board.NotifyItemLost(this, item);
+        board.NotifyItemLost(this, item,msg);
     }
 
     public bool ghost {

@@ -17,9 +17,10 @@ public abstract class EventToken
 {
     //public GameObject eventToken;
 
-    public static possibleEvents PickRandom() {
+    public static possibleEvents PickRandom(BoardState board) {
         var entries = Enum.GetValues(typeof(possibleEvents));
-        var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
+        var index = board.random.Next(0, entries.Length);
+        //var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
         return (possibleEvents)entries.GetValue(index);
     }
     public static EventToken Init(possibleEvents eve) {
