@@ -2028,10 +2028,6 @@ CanvasRenderer:
   m_GameObject: {fileID: 970038793}
   m_CullTransparentMesh: 0
 --- !u!1 &977839166
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
