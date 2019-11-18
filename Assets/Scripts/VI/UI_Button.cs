@@ -27,7 +27,10 @@ public class UI_Button : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,
         Resume,
         Option_Ingame,
         Researt,
-        Exit_Ingame
+        Exit_Ingame,
+        SinglePlayer,
+        MultiPlayer,
+        Connect
     }
     public PanelType panelType;
     public ButtonType buttonType;
@@ -112,6 +115,12 @@ public class UI_Button : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,
                         break;
                     case ButtonType.Apply:
                         MainMenu.i.PressOption(false);
+                        break;
+                    case ButtonType.SinglePlayer:
+                        MainMenu.i.PressSingleMulti(true);
+                        break;
+                    case ButtonType.MultiPlayer:
+                        MainMenu.i.PressSingleMulti(false);
                         break;
                 }
                 break;

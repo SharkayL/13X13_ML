@@ -13,9 +13,18 @@ public class MainMenu : MonoBehaviour
             return _i;
         }
     }
-    public GameObject teamInfoPanel;
+
+    [Header("MainMenuPanel_Big")]
+    public GameObject singleTeamInfo;
+    public GameObject multiTeamInfo;
     public GameObject startingPanel;
+
+    [Header("MainMenuPanel_Small")]
+    public GameObject beginggingButtonsPanel;
+    public GameObject singleMultiButtonsPanel;
     public GameObject optionPanel;
+
+    [Header("Audio")]
     public AudioMixer audioMixer;
 
 
@@ -25,14 +34,26 @@ public class MainMenu : MonoBehaviour
     }
 
     public void PressStart() {
+        beginggingButtonsPanel.SetActive(false);
+        singleMultiButtonsPanel.SetActive(true);
+    }
+
+    public void PressSingleMulti(bool single) {
         startingPanel.SetActive(false);
-        teamInfoPanel.SetActive(!startingPanel.activeInHierarchy);
+        if (single)
+        {
+            singleTeamInfo.SetActive(true);
+        }
+        else {
+            multiTeamInfo.SetActive(true);
+        }
     }
 
     public void PressOption(bool b)
     {
         optionPanel.SetActive(b);
     }
+
 
     public void SetVolume(float volume)
     {
