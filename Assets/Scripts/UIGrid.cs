@@ -54,7 +54,7 @@ public void OnPointerClick(PointerEventData eventData)
                                 player.DiscardCard(randomCard);
                                 info.player.AddCard(randomCard);
                                 info.player.playerOG.GetComponent<SpriteRenderer>().sprite = info.player.humanSprite;
-                                Debug.Log("You gave away " + randomCard.GetType().Name + "!");
+                                Debug.Log("You gave away " + randomCard.getName() + "!");
                             }
                             player.UseAction();
                         }

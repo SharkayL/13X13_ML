@@ -29,7 +29,7 @@ public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler 
                     manager.RecoveringGrids();
                 }
                 manager.HighlightingPossibilities(card);
-                manager.instruction.text = string.Format("You selected the" + card.GetType().Name + "!");
+                manager.instruction.text = string.Format("You selected the" + card.getName() + "!");
             }
             else
             {

@@ -15,13 +15,13 @@ public class BoardState {
     public bool isLight = true;
     public int currentTurn = 0;
     public PlayerState currentPlayer;
-    int maxTurns = 40;
+    int maxTurns = 44;
     public GameObject cellPrefab;
     public GameObject parent;
     public MatureManager manager;
     public bool over = false;
     
-    public static int defaultActionCount = 5;
+    public static int defaultActionCount = 2;
 
     public Action<PlayerState,PlayerState,bool> playerTurnStart;
     public Action<PlayerState, Item,bool> playerGetsItem;
@@ -270,7 +270,7 @@ public class BoardState {
 
     public bool flipped {
         get {
-            return (int)currentTurn % 12 == 0 && currentTurn != 0;
+            return (int)currentTurn % 16 == 0 && currentTurn != 0;
         }
     }
 }
