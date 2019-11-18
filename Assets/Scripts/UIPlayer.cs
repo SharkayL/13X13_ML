@@ -19,6 +19,7 @@ public class UIPlayer : MonoBehaviour
     public bool IsDropped() {
         if (collider.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
         {
+            Debug.Log("used on" + player.id);
             return true;
         }
         return false;

@@ -230,7 +230,7 @@ public class LongMug : Item
 
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
-        if (targetPlayer != null && targetPlayer.items.Count > 0)
+        if (targetPlayer != null && targetPlayer.items.Count > 0 && playedBy.items.Count>1)
         {
             return true;
         }
@@ -247,7 +247,7 @@ public class LongMug : Item
             Item discardedP = playedBy.PickRandomItem();
             targetPlayer.DiscardItem(discardedT);
             targetPlayer.AddItem(discardedP);
-            playedBy.DiscardItem(discardedP);
+            //playedBy.DiscardItem(discardedP);
             playedBy.AddItem(discardedT);
             playedBy.UseAction();
             return true;

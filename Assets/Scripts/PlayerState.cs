@@ -87,6 +87,26 @@ public class PlayerState
         }
     } 
 
+    public IEnumerable<GridInfo> GetAdjacentGrids()
+    {
+        if(this.row > 0)
+        {
+            yield return board.GetGrid(this.col, this.row - 1);
+        }
+        if(this.row < 12)
+        {
+            yield return board.GetGrid(this.col, this.row + 1);
+        }
+        if(this.col > 0)
+        {
+            yield return board.GetGrid(this.col-1, this.row);
+        }
+        if (this.col < 12)
+        {
+            yield return board.GetGrid(this.col + 1, this.row);
+        }
+    }
+
     public void Move(GridInfo grid,bool msg = false)
     {
         var oldCell = this.currentCell;
@@ -125,8 +145,8 @@ public class PlayerState
     public Card PickRandomCard()
     {
         //int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.movementCards.Count));
-        var index = board.random.Next(1, this.movementCards.Count);
-        var card = movementCards[index - 1];
+        var index = board.random.Next(0, this.movementCards.Count);
+        var card = movementCards[index];
         //Debug.Log(card.GetType().Name);
         return card;
     }
@@ -134,8 +154,8 @@ public class PlayerState
     public Item PickRandomItem()
     {
         //int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.items.Count));
-        var index = board.random.Next(1, this.items.Count);
-        var item = items[index - 1];
+        var index = board.random.Next(0, this.items.Count);
+        var item = items[index];
         return item;
     }
 

@@ -21,7 +21,7 @@ public class BoardState {
     public MatureManager manager;
     public bool over = false;
     
-    public static int defaultActionCount = 2;
+    public static int defaultActionCount = 5;
 
     public Action<PlayerState,PlayerState,bool> playerTurnStart;
     public Action<PlayerState, Item,bool> playerGetsItem;
@@ -36,6 +36,16 @@ public class BoardState {
     public Action<int> teamWins;
     public System.Random random;
     public int randomSeed;
+
+    public GridInfo[,] GetCurrentGrids() {
+        if (isLight)
+        {
+            return lightGrids;
+        }
+        else {
+            return darkGrids;
+        }
+    }
 
     public int NextCardId()
     {
@@ -83,6 +93,7 @@ public class BoardState {
         if(playerMoves != null)
         {
             playerMoves(player,from,to,msg);
+            manager.RecoveringGrids();
         }
     }
 
@@ -170,6 +181,7 @@ public class BoardState {
 
         for (int i = 0; i < 4; ++i)
         {
+            players[i].playerOG.GetComponent<UIPlayer>().player = players[i];
             players[i].playerSprite = manager.playerSprites[i];
             players[i].humanSprite = manager.humanSprites[i];
             players[i].ghostSprite = manager.ghostSprites[i];

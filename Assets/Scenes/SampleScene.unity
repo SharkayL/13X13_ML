@@ -3932,6 +3932,8 @@ MonoBehaviour:
   dia2: {fileID: 21300000, guid: f61c2602a274f174f9feaf6cdc2dfd9e, type: 3}
   cro1: {fileID: 21300000, guid: 43d29a5ddea3bcd469e92be83621baaa, type: 3}
   str3: {fileID: 21300000, guid: 9cc1dc28913cbad419c2d5558baf4417, type: 3}
+  whiteCell: {fileID: 21300000, guid: a00afe4bf21163641a66c6241a6942db, type: 3}
+  greenCell: {fileID: 21300000, guid: 935812d30f2d5284fbd53ff057620396, type: 3}
   displayPlayerId: 0
 --- !u!114 &709898677
 MonoBehaviour:
@@ -10891,7 +10893,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 320572379}
   m_Direction: 2
   m_Value: 0.9999546
-  m_Size: 0.64057857
+  m_Size: 0.6405787
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

@@ -230,7 +230,7 @@ public class DiagonalBy2 : Card
     }
     public override string getDescription()
     {
-        return "Allow you to move orthoganally by 2 grids.";
+        return "Allow you to move diagonally by 2 grids.";
     }
 }
 

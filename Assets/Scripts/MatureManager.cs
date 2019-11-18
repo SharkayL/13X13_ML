@@ -92,8 +92,11 @@ public class MatureManager : MonoBehaviour {
     public Sprite dia2;
     public Sprite cro1;
     public Sprite str3;
-    #endregion 
 
+    public Sprite whiteCell;
+    public Sprite greenCell;
+    #endregion 
+    public List<GridInfo> highlightedGrids = new List<GridInfo>();
     protected GameClient client;
 
     public static GameStart startType = GameStart.server;
@@ -294,7 +297,7 @@ public class MatureManager : MonoBehaviour {
 
     public void SkipAction() {
         //for playtesting.
-        board.currentPlayer.UseAction();
+        board.currentPlayer.UseAction(true);
     }
     public void HideInventory()
     {
@@ -512,5 +515,30 @@ public class MatureManager : MonoBehaviour {
         if (card is Cross1Obstacle) return cro1;
         if (card is StraightBy3) return str3;
         return null;
+    }
+
+    public void HighlightingPossibilities(Card card) {
+        foreach(GridInfo grid in board.GetCurrentGrids())
+        {
+            if (card.canMove(board.currentPlayer, grid)) {
+                SpriteRenderer renderer = grid.cell.GetComponent<SpriteRenderer>();
+                renderer.sprite = greenCell;
+                Color c = renderer.color;
+                c.a = 1;
+                renderer.color = c;
+                highlightedGrids.Add(grid);
+            }
+        }
+    }
+
+    public void RecoveringGrids() {
+        foreach (GridInfo grid in highlightedGrids) {
+            SpriteRenderer renderer = grid.cell.GetComponent<SpriteRenderer>();
+            renderer.sprite = whiteCell;
+            Color c = renderer.color;
+            c.a = 60/255f;
+            renderer.color = c;
+        }
+        highlightedGrids.Clear();
     }
 }

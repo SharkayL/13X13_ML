@@ -25,6 +25,10 @@ public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler 
             if (manager.board.currentPlayer.playingCard != this.card)
             {
                 manager.board.currentPlayer.playingCard = this.card;
+                if (manager.highlightedGrids.Count != 0) {
+                    manager.RecoveringGrids();
+                }
+                manager.HighlightingPossibilities(card);
                 manager.instruction.text = string.Format("You selected the" + card.GetType().Name + "!");
             }
             else
