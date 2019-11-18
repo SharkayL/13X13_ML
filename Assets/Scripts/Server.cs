@@ -192,7 +192,7 @@ public class Server : GameClient
             // use the same in the client
 
             /* Initializes the Listener */
-            listener = new TcpListener(ipAd, 8001);
+            listener = new TcpListener(IPAddress.Any, 8001);
 
             /* Start Listeneting at the specified port */
             listener.Start();

@@ -21,7 +21,7 @@ public class BoardState {
     public MatureManager manager;
     public bool over = false;
     
-    public static int defaultActionCount = 20;
+    public static int defaultActionCount = 2;
 
     public Action<PlayerState,PlayerState,bool> playerTurnStart;
     public Action<PlayerState, Item,bool> playerGetsItem;
