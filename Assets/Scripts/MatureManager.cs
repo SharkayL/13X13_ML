@@ -18,6 +18,7 @@ public class MatureManager : MonoBehaviour {
     int gridSize = 70;
     public GameObject parent;
 
+    [Header("Players")]
     public GameObject player1;
     public GameObject player2;
     public GameObject player3;
@@ -27,6 +28,7 @@ public class MatureManager : MonoBehaviour {
     public List<Sprite> ghostSprites;
     public List<Sprite> humanSprites;
 
+    [Header("BoardElements")]
     public GameObject eve;
     public GameObject card;
     public GameObject item;
@@ -40,6 +42,7 @@ public class MatureManager : MonoBehaviour {
 
     public GameObject background;
 
+    [Header("Panels")]
     public GameObject itemInventory;
     public Image imgPrefab;
     public GameObject cardInventory;
@@ -52,12 +55,14 @@ public class MatureManager : MonoBehaviour {
     bool destroyCard;
     float t = 0;
 
+    [Header("Avatars")]
     public Image currentPlayer;
     public Image nextPlayer1;
     public Image nextPlayer2;
     public Image nextPlayer3;
     public List<Sprite> playerSprites;
 
+    [Header("UI_Info")]
     public Text instruction;
     public Text actionsCount;
     public Text tempInfo;
@@ -70,6 +75,7 @@ public class MatureManager : MonoBehaviour {
     bool h = false;
     public GameObject i;
 
+    [Header("Items")]
     public Sprite magnetRed;
     public Sprite magnetBlue;
     public Sprite longArm;
@@ -78,6 +84,7 @@ public class MatureManager : MonoBehaviour {
     public Text itemName;
     public Text itemDescrib;
 
+    [Header("Events")]
     public Sprite add2C;
     public Sprite add1I;
     public Sprite add1B;
@@ -87,6 +94,7 @@ public class MatureManager : MonoBehaviour {
     public Sprite beR;
     public SpriteRenderer eveImg;
 
+    [Header("Cards")]
     public Sprite dia1;
     public Sprite adj2;
     public Sprite dia2;
@@ -124,7 +132,7 @@ public class MatureManager : MonoBehaviour {
             {
                 client.SendPlayerMoved(player, to);
             }
-            //Debug.Log("Player Moved");
+            Debug.Log("Player Moved");
             //animation maybe;
             return false;
         };
@@ -135,6 +143,7 @@ public class MatureManager : MonoBehaviour {
             {
                 client.SendPlayerUsedCard(player, card, grid);
             }
+
         };
         this.board.playerUsedItem = (player, target, item, msg) => {
             if(client != null && msg)
@@ -192,12 +201,17 @@ public class MatureManager : MonoBehaviour {
 
         this.board.playerTurnStart = (newPlayer, oldPlayer,msg) =>
         {
+            //newPlayer.playerOG.GetComponent<Animator>().SetBool("isTurn",true);
             currentPlayer.sprite = playerSprites[board.currentTurn % board.players.Count];
             //status.text = "is ghost? " + board.currentPlayer.ghost;            
             nextPlayer1.sprite = playerSprites[(board.currentTurn + 1) % board.players.Count];
             nextPlayer2.sprite = playerSprites[(board.currentTurn +2) % board.players.Count];
             nextPlayer3.sprite = playerSprites[(board.currentTurn +3) % board.players.Count];
             currentPlayer.gameObject.GetComponent<UIPlayer>().player = newPlayer;
+
+            UpdateAnimation(newPlayer, newPlayer.ghost, true);
+
+
             if (board.currentPlayer.ghost)
             {
                 ghost.GetComponent<Image>().sprite = board.currentPlayer.ghostSprite;
@@ -217,7 +231,7 @@ public class MatureManager : MonoBehaviour {
             }
             else
             {
-                if(displayPlayerId != -1)
+                if (displayPlayerId != -1)
                 {
                     var player = board.GetPlayerById(displayPlayerId);
                     UpdateDisplayedCards(player);
@@ -428,6 +442,15 @@ public class MatureManager : MonoBehaviour {
             DisplayItem(currentPlayer,item);
         }
     }
+
+    //Animation
+
+    public void UpdateAnimation(PlayerState currentPlayer,bool isGhost, bool isTurn)
+    {
+        currentPlayer.playerOG.GetComponent<Animator>().SetBool("isGhost",isGhost);
+        currentPlayer.playerOG.GetComponent<Animator>().SetBool("isTurn", isTurn);
+    }
+
 
     public void MouseHoverCard(Transform card, Vector3 localPos, Card c) {
         poppedCard.transform.localPosition = localPos;
