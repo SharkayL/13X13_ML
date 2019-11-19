@@ -19,15 +19,13 @@ public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler 
         if (manager.board.currentPlayer.ghost) {
             return;
         }
-
-        if (manager.board.currentPlayer.actionCount > 0)
+        var player = manager.TargetPlayer();
+        if (player.actionCount > 0)
         {
-            if (manager.board.currentPlayer.playingCard != this.card)
+            if (player.playingCard != this.card)
             {
-                manager.board.currentPlayer.playingCard = this.card;
-                if (manager.highlightedGrids.Count != 0) {
-                    manager.RecoveringGrids();
-                }
+                player.playingCard = this.card;
+                manager.RecoveringGrids();
                 manager.HighlightingPossibilities(card);
                 manager.instruction.text = string.Format("You selected the" + card.getName() + "!");
             }

@@ -150,6 +150,7 @@ public class BoardState {
         return GetGrid(place.col, place.row);
     }
 
+
     public void Init(int seed) {
         this.randomSeed = seed;
         this.random = new System.Random(seed);

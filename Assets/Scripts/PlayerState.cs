@@ -121,9 +121,8 @@ public class PlayerState
     public void UseAction(bool msg = false)
     {
         --actionCount;
-        //board.manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", actionCount);
-        //Vicent modify
         board.NotifyPlayerUsedAction(this,msg);
+        board.manager.UpdatePlayerInfo();
         board.manager.actionsCount.text = actionCount.ToString();
         //Animation
         board.manager.UpdateAnimation(this,ghost,actionCount>0);

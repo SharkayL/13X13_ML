@@ -221,10 +221,12 @@ public class MatureManager : MonoBehaviour {
                 ghost.SetActive(board.currentPlayer.ghost);
             }
             
-            nextPlayer1.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 1) % board.players.Count];
-            nextPlayer2.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 2) % board.players.Count];
-            nextPlayer3.GetComponent<UIPlayer>().player = board.players[(board.currentTurn + 3) % board.players.Count];
-            if(oldPlayer != null)
+            nextPlayer1.GetComponent<UIPlayer>().player = PlayerInfoChanged(1);
+            nextPlayer2.GetComponent<UIPlayer>().player = PlayerInfoChanged(2);
+            nextPlayer3.GetComponent<UIPlayer>().player = PlayerInfoChanged(3);
+            UpdatePlayerInfo();
+            
+            if (oldPlayer != null)
             {
                 if(displayPlayerId == -1)
                 {
@@ -296,7 +298,7 @@ public class MatureManager : MonoBehaviour {
 
     public void StartServer()
     {
-        board.Init(42);
+        board.Init(new System.Random().Next());
         var server = new Server(board);
         server.Start();
         this.client = server;
@@ -393,6 +395,18 @@ public class MatureManager : MonoBehaviour {
                 obj.transform.localPosition = new Vector3(10 + 110 * player.CardIndex(key), -10);
             }
 
+        }
+    }
+
+    public PlayerState TargetPlayer()
+    {
+        if(displayPlayerId == -1)
+        {
+            return board.currentPlayer;
+        }
+        else
+        {
+            return board.GetPlayerById(displayPlayerId);
         }
     }
 
@@ -543,7 +557,7 @@ public class MatureManager : MonoBehaviour {
     public void HighlightingPossibilities(Card card) {
         foreach(GridInfo grid in board.GetCurrentGrids())
         {
-            if (card.canMove(board.currentPlayer, grid)) {
+            if (card.canMove(TargetPlayer(), grid)) {
                 SpriteRenderer renderer = grid.cell.GetComponent<SpriteRenderer>();
                 renderer.sprite = greenCell;
                 Color c = renderer.color;
@@ -563,5 +577,16 @@ public class MatureManager : MonoBehaviour {
             renderer.color = c;
         }
         highlightedGrids.Clear();
+    }
+
+    public PlayerState PlayerInfoChanged(int i)
+    {
+        PlayerState playerInfo = board.players[(board.currentTurn + i) % board.players.Count];
+        return playerInfo;
+    }
+    public void UpdatePlayerInfo() {
+        nextPlayer1.GetComponentInChildren<Text>().text = string.Format("<b>{0}</b>{1}\n<b>{2}</b>{3}", "Cards: ", PlayerInfoChanged(1).movementCards.Count, "Items: ", PlayerInfoChanged(1).items.Count);
+        nextPlayer2.GetComponentInChildren<Text>().text = string.Format("<b>{0}</b>{1}\n<b>{2}</b>{3}", "Cards: ", PlayerInfoChanged(2).movementCards.Count, "Items: ", PlayerInfoChanged(2).items.Count);
+        nextPlayer3.GetComponentInChildren<Text>().text = string.Format("<b>{0}</b>{1}\n<b>{2}</b>{3}", "Cards: ", PlayerInfoChanged(3).movementCards.Count, "Items: ", PlayerInfoChanged(3).items.Count);
     }
 }
