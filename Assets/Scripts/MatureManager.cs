@@ -192,7 +192,7 @@ public class MatureManager : MonoBehaviour {
         this.board.PlayerTriggersEve = (player, eve,msg) => {
             //Debug.Log(eve.GetType().Name);
             DisplayEve(eve);          
-            eveText.text = "You trigered Event: " + eve.GetType().Name;
+            eveText.text = "Player"+(player.id +1) + " trigered Event: " + eve.GetType().Name;
         };
         this.board.playerUsedAction = (player,msg) =>
         {

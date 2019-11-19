@@ -12,23 +12,35 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (manager.displayPlayerId != -1 && manager.board.currentPlayer.id != manager.displayPlayerId) {
-            return;
+        if(!ProcessBeingDrag())
+        {
+            eventData.pointerDrag = null;
         }
-        if (manager.board.over) {
-            return;
+    }
+
+    public bool ProcessBeingDrag()
+    {
+        if (manager.displayPlayerId != -1 && manager.board.currentPlayer.id != manager.displayPlayerId)
+        {
+            return false;
+        }
+        if (manager.board.over)
+        {
+            return false;
         }
         if (manager.board.currentPlayer.ghost)
         {
-            return;
+            return false;
         }
-        if (manager.board.currentPlayer.noItem) {
-            return;
+        if (manager.board.currentPlayer.noItem)
+        {
+            return false;
         }
         parent = this.transform.parent;
         this.transform.SetParent(manager.ratioPanel.transform);
         this.transform.position = Input.mousePosition;
         manager.instruction.text = string.Format("You selected the" + item.GetType().Name + "!");
+        return true;
     }
 
     public void OnDrag(PointerEventData eventData)
