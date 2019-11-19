@@ -121,11 +121,12 @@ public class PlayerState
     public void UseAction(bool msg = false)
     {
         --actionCount;
-
         //board.manager.actionsCount.text = "Actions left: " + string.Format("<b>{0}</b>", actionCount);
         //Vicent modify
         board.NotifyPlayerUsedAction(this,msg);
         board.manager.actionsCount.text = actionCount.ToString();
+        //Animation
+        board.manager.UpdateAnimation(this,ghost,actionCount>0);
 
         if (actionCount <= 0)
         {
@@ -220,7 +221,8 @@ public class PlayerState
     }
 
     public bool ghost {
-        get { return this.movementCards.Count<=0;  }
+        get { Debug.Log("Ghost"); return this.movementCards.Count<=0;}
+
     }
 
 }

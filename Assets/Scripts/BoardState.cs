@@ -224,6 +224,7 @@ public class BoardState {
             int row = player.currentCell.row;
             int column = player.currentCell.column;
             player.currentCell = GetGrid(column, 12 - row);
+            player.playerOG.GetComponent<Animator>().enabled = true;
         }
     }
 
