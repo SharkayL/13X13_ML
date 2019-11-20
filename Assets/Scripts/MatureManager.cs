@@ -68,6 +68,7 @@ public class MatureManager : MonoBehaviour {
     public Text tempInfo;
     public string defaultText;
     public Text winText;
+    public GameObject winPanel;
     public Text eveText;
 
     public Button temp;
@@ -126,6 +127,7 @@ public class MatureManager : MonoBehaviour {
         {
             //GameOver Scene: team (int) wins;
             //cant take any more actions;
+            winPanel.SetActive(true);
             winText.text = "Team " + team + " wins!";
         };
 
