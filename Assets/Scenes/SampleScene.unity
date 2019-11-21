@@ -1394,7 +1394,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelType: 1
-  buttonType: 10
+  buttonType: 0
 --- !u!114 &271047151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2742,7 +2742,6 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
-  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2831,18 +2830,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &519420033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aedfb05b1206047b08a7f95e1a696c51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &542609714
 GameObject:
   m_ObjectHideFlags: 0
@@ -3306,17 +3293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc6dc848da6cd40f895b0eefb97e25eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundClipArray:
-  - sound: 0
-    audioClip: {fileID: 8300000, guid: 0f445b592458e4f0ea70b7a0fa68e3d3, type: 3}
-  - sound: 0
-    audioClip: {fileID: 0}
-  - sound: 0
-    audioClip: {fileID: 0}
-  - sound: 0
-    audioClip: {fileID: 0}
-  - sound: 0
-    audioClip: {fileID: 0}
+  soundClipArray: []
 --- !u!4 &612814416
 Transform:
   m_ObjectHideFlags: 0
@@ -3925,7 +3902,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelType: 1
-  buttonType: 8
+  buttonType: 0
 --- !u!114 &700947880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5182,7 +5159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelType: 2
-  buttonType: 13
+  buttonType: 6
 --- !u!1 &827773180
 GameObject:
   m_ObjectHideFlags: 0
@@ -7339,7 +7316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelType: 2
-  buttonType: 14
+  buttonType: 7
 --- !u!1 &1124148735
 GameObject:
   m_ObjectHideFlags: 0
@@ -9448,7 +9425,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1351694406}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.12, y: 0.02, z: -0.062888816}
+  m_LocalPosition: {x: -0.45, y: -0.13, z: -0.062888816}
   m_LocalScale: {x: 1.0006988, y: 1.0006988, z: 1.0006988}
   m_Children: []
   m_Father: {fileID: 1983387638}
@@ -11143,7 +11120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelType: 1
-  buttonType: 6
+  buttonType: 0
 --- !u!114 &1611006910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12837,7 +12814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelType: 1
-  buttonType: 9
+  buttonType: 0
 --- !u!114 &1957083505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12927,7 +12904,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelType: 1
-  buttonType: 7
+  buttonType: 0
 --- !u!114 &1961087193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14528,7 +14505,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.9935299, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

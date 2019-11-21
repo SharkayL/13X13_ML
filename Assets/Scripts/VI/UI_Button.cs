@@ -19,18 +19,12 @@ public class UI_Button : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,
         Exit,
         Play,
         Apply,
-        Guide,
-        Rule,
-        Item,
-        Event,
-        Card,
-        Resume,
-        Option_Ingame,
         Researt,
         Exit_Ingame,
         SinglePlayer,
         MultiPlayer,
-        Connect
+        BackToBeginning,
+        BackToSingleMultiPlayer
     }
     public PanelType panelType;
     public ButtonType buttonType;
@@ -102,7 +96,10 @@ public class UI_Button : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,
                 switch (buttonType)
                 {
                     case ButtonType.Start:
-                        MainMenu.i.PressStart();
+                        MainMenu.i.PressStart(true);
+                        break;
+                    case ButtonType.BackToBeginning:
+                        MainMenu.i.PressStart(false);
                         break;
                     case ButtonType.Option:
                         MainMenu.i.PressOption(true);
@@ -117,10 +114,13 @@ public class UI_Button : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,
                         MainMenu.i.PressOption(false);
                         break;
                     case ButtonType.SinglePlayer:
-                        MainMenu.i.PressSingleMulti(true);
+                        MainMenu.i.PressSingleMulti(true,true);
                         break;
                     case ButtonType.MultiPlayer:
-                        MainMenu.i.PressSingleMulti(false);
+                        MainMenu.i.PressSingleMulti(false,true);
+                        break;
+                    case ButtonType.BackToSingleMultiPlayer:
+                        MainMenu.i.PressSingleMulti(false, false);
                         break;
                 }
                 break;
