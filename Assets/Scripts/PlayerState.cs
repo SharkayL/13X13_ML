@@ -112,7 +112,7 @@ public class PlayerState
         var oldCell = this.currentCell;
         this.currentCell = grid;
         this.board.NotifyPlayerMoved(this, oldCell, grid, msg);
-        if (grid.exit)
+        if (grid.exit && !this.ghost)
         {
             board.NotifyGameover(this.team);
         }
