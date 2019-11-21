@@ -21,7 +21,13 @@ public class InGameUIController : MonoBehaviour
     [HideInInspector]
     public List<Image> informationButtons = new List<Image>();
     public List<GameObject> informationContents = new List<GameObject>();
+    public GameObject informationPanel;
     GameObject tempContent;
+
+    private void Start()
+    {
+        informationPanel.SetActive(true);
+    }
 
     public void InformationButtonSelectd(Image image)
     {
@@ -29,19 +35,21 @@ public class InGameUIController : MonoBehaviour
         {
             for (int i = 0; i < informationContents.Count; i++)
             {
-                if (image.gameObject.name == informationContents[i].name) {
+                if (image.gameObject.name == informationContents[i].name)
+                {
                     informationContents[i].SetActive(true);
                     tempContent = informationContents[i];
                 }
             }
             image.enabled = false;
             informationContents.Remove(tempContent);
-            informationContents.Insert(0,tempContent);
+            informationContents.Insert(0, tempContent);
 
             informationButtons.Remove(image);
             informationButtons.Insert(0, image);
         }
-        else {
+        else
+        {
             return;
         }
         //Close others
@@ -50,5 +58,10 @@ public class InGameUIController : MonoBehaviour
             informationContents[i].SetActive(false);
             informationButtons[i].enabled = true;
         }
+    }
+
+    public void JumpScene(int i)
+    {
+        SceneController.JumpScene(i);
     }
 }
