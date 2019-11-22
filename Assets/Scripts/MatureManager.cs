@@ -111,12 +111,18 @@ public class MatureManager : MonoBehaviour {
     public static GameStart startType = GameStart.server;
     public static string serverIp = "127.0.0.1";
     public static int playerID = -1;
-
+    bool started = false;
     public int displayPlayerId;
 
     // Use this for initialization
-    void Start () {
-		board = new BoardState();
+    public void Start () {
+        if(started)
+        {
+            return;
+        }
+        started = true;
+        poppedCard.transform.GetChild(0).gameObject.SetActive(false);
+        board = new BoardState();
         this.displayPlayerId = MatureManager.playerID;
         board.cellPrefab = cellPrefab;
         board.parent = parent;
@@ -137,7 +143,7 @@ public class MatureManager : MonoBehaviour {
             {
                 client.SendPlayerMoved(player, to);
             }
-            Debug.Log("Player Moved");
+            //Debug.Log("Player Moved");
             //animation maybe;
             return false;
         };
@@ -262,6 +268,29 @@ public class MatureManager : MonoBehaviour {
         }
     }
 
+    public void Reset()
+    {
+        foreach(var player in board.players)
+        {
+            player.CleanUp();
+        }
+        foreach(var grid in board.GetCurrentGrids())
+        {
+            grid.CleanUp();
+        }
+        foreach(var entry in displayedCards)
+        {
+            GameObject.Destroy(entry.Value.gameObject);
+        }
+        displayedCards.Clear();
+        foreach (var entry in displayedItems)
+        {
+            GameObject.Destroy(entry.Value.gameObject);
+        }
+        displayedItems.Clear();
+        board.Init(new System.Random().Next());
+    }
+
     public void PullMessages()
     {
         while(this.client.pending.Count != 0)
@@ -370,10 +399,6 @@ public class MatureManager : MonoBehaviour {
    
         obj.transform.localPosition = new Vector3(gridSize * g.column, gridSize * g.row, 0);
     }
-    private void Awake()
-    {
-        poppedCard.transform.GetChild(0).gameObject.SetActive(false);
-    }
     public void ArrangeCard(PlayerState player, Dictionary<Card, Image> displayedCards) {
         if (displayPlayerId != -1 && displayPlayerId != player.id)
         {
@@ -443,7 +468,14 @@ public class MatureManager : MonoBehaviour {
 
     public void UpdateDisplayedCards(PlayerState currentPlayer) {
         foreach (var entry in displayedCards) {
-            Destroy(entry.Value.gameObject);
+            try
+            {
+                Destroy(entry.Value.gameObject);
+            }
+            catch(Exception err)
+            {
+
+            }
         }
         displayedCards.Clear();
         foreach (var card in currentPlayer.movementCards) {

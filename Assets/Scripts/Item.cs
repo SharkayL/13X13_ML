@@ -40,6 +40,15 @@ public abstract class Item
     public abstract string getName();
     public abstract string getDescription();
 
+    public static IEnumerable<PossibleItems> ListItems()
+    {
+        var entries = Enum.GetValues(typeof(PossibleItems));
+        foreach(var entry in entries)
+        {
+            yield return (PossibleItems)entry;
+        }
+    }
+
     public static PossibleItems PickRandom(BoardState board)
     {
         var entries = Enum.GetValues(typeof(PossibleItems));
@@ -67,6 +76,45 @@ public abstract class Item
             return new Blade(board);
         }
         return null;
+    }
+
+    public static Type ExtractClass(PossibleItems type)
+    {
+        if(type == PossibleItems.blade)
+        {
+            return typeof(Blade);
+        }
+        if(type == PossibleItems.longArm)
+        {
+            return typeof(LongArm);
+        }
+        if(type == PossibleItems.longMug)
+        {
+            return typeof(LongMug);
+        }
+        if(type == PossibleItems.magnetBlue)
+        {
+            return typeof(MagnetBlue);
+        }
+        if(type == PossibleItems.magnetRed)
+        {
+            return typeof(MagnetRed);
+        }
+        return null;
+    }
+
+    public static int Count(List<Item> items,PossibleItems itemType)
+    {
+        var type = ExtractClass(itemType);
+        int count = 0;
+        foreach(var item in items)
+        {
+            if(item.GetType() == type)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
     public static Item PickRandomObj(BoardState board)

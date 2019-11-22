@@ -26,6 +26,19 @@ public class GridInfo
         this.row = row;
     }
 
+    public int index
+    {
+        get
+        {
+            return row * 13 + column;
+        }
+    }
+
+    public float Distance(GridInfo other)
+    {
+        return (new Vector2(this.column, this.row) - new Vector2(other.column, other.row)).magnitude;
+    }
+
     public PlayerState player
     {
         get
@@ -84,6 +97,14 @@ public class GridInfo
         
         player.playerOG = obj;
         return obj;
+    }
+
+    public void CleanUp()
+    {
+        if(this.cell != null)
+        {
+            GameObject.Destroy(this.cell.gameObject);
+        }
     }
 
     public void InitGameObject(MatureManager manager,bool start, bool isLight)

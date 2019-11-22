@@ -6,7 +6,7 @@ using System;
 public class BoardState {
     public GridInfo[,] lightGrids = new GridInfo[13, 13];
     public GridInfo[,] darkGrids = new GridInfo[13, 13];
-    public Dictionary<int, Card> cardDatabase = new Dictionary<int, Card>();
+    public Dictionary<int, Card> cardDatabase;
     public Dictionary<int, Item> itemDatabase = new Dictionary<int, Item>();
     public List<PlayerState> players = new List<PlayerState>();
     protected int nextCardId = 0;
@@ -15,7 +15,7 @@ public class BoardState {
     public bool isLight = true;
     public int currentTurn = 0;
     public PlayerState currentPlayer;
-    int maxTurns = 44;
+    public int maxTurns = 120;
     public GameObject cellPrefab;
     public GameObject parent;
     public MatureManager manager;
@@ -145,6 +145,23 @@ public class BoardState {
         }
     }
 
+    public GridInfo GetGrid(int index)
+    {
+        return GetGrid(index % 13, index / 13);
+    }
+
+    public GridInfo GetExit()
+    {
+        foreach(var grid in GetCurrentGrids())
+        {
+            if(grid.exit)
+            {
+                return grid;
+            }
+        }
+        return null;
+    }
+
     public GridInfo GetGrid(Placement place)
     {
         return GetGrid(place.col, place.row);
@@ -153,8 +170,14 @@ public class BoardState {
 
     public void Init(int seed) {
         this.randomSeed = seed;
+        isLight = true;
+        over = false;
+        players = new List<PlayerState>();
+        currentTurn = 0;
         this.random = new System.Random(seed);
-        for(int i = 0; i < 4; ++i)
+        this.cardDatabase = new Dictionary<int, Card>();
+        this.itemDatabase = new Dictionary<int, Item>();
+        for (int i = 0; i < 4; ++i)
         {
             players.Add(new PlayerState(this,i));
         }

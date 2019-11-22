@@ -80,12 +80,56 @@ public class PlayerState
         }
     }
 
+    public void CleanUp()
+    {
+        if(playerOG != null)
+        {
+            GameObject.Destroy(playerOG.gameObject);
+        }
+    }
+
     public void InitPlayerCards() {
         for (int i = 0; i < initCards; ++i) {
             Card card = Card.PickRandomObj(this.board);
             AddCard(card);
         }
     } 
+
+    public int CountCards(possibleCards type)
+    {
+        return Card.Count(this.movementCards, type);
+    }
+
+    public int CountItems(PossibleItems type)
+    {
+        return Item.Count(this.items, type);
+    }
+
+    public Card GetCardByType(possibleCards type)
+    {
+        var classType = Card.ExtractClass(type);
+        foreach(var card in movementCards)
+        {
+            if(card.GetType() == classType)
+            {
+                return card;
+            }
+        }
+        return null;
+    }
+
+    public Item GetItemByType(PossibleItems type)
+    {
+        var classType = Item.ExtractClass(type);
+        foreach (var item in items)
+        {
+            if (item.GetType() == classType)
+            {
+                return item;
+            }
+        }
+        return null;
+    }
 
     public IEnumerable<GridInfo> GetAdjacentGrids()
     {
@@ -125,8 +169,14 @@ public class PlayerState
         board.manager.UpdatePlayerInfo();
         board.manager.actionsCount.text = actionCount.ToString();
         //Animation
-        board.manager.UpdateAnimation(this,ghost,actionCount>0);
+        try
+        {
+            //board.manager.UpdateAnimation(this, ghost, actionCount > 0);
+        }
+        catch(Exception err)
+        {
 
+        }
         if (actionCount <= 0)
         {
             board.manager.ghost.SetActive(false);
@@ -220,7 +270,7 @@ public class PlayerState
     }
 
     public bool ghost {
-        get { Debug.Log("Ghost"); return this.movementCards.Count<=0;}
+        get {  return this.movementCards.Count<=0;}
 
     }
 

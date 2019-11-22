@@ -112,6 +112,55 @@ public abstract class Card
         }
         return null;
     }
+
+    public static Type ExtractClass(possibleCards type)
+    {
+        if (type == possibleCards.adjacentBy2)
+        {
+            return typeof(AdjacentBy2);
+        }
+        if(type == possibleCards.cross1Obstacle)
+        {
+            return typeof(Cross1Obstacle);
+        }
+        if(type == possibleCards.diagonalBy1)
+        {
+            return typeof(DiagonalBy1);
+        }
+        if(type == possibleCards.diagonalBy2)
+        {
+            return typeof(DiagonalBy2);
+        }
+        if(type == possibleCards.straightBy3)
+        {
+            return typeof(StraightBy3);
+        }
+        return null;
+    }
+
+    public static int Count(List<Card> cards, possibleCards cardType)
+    {
+        var type = ExtractClass(cardType);
+        int count = 0;
+        foreach (var card in cards)
+        {
+            if (card.GetType() == type)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static IEnumerable<possibleCards> ListCards()
+    {
+        var entries = Enum.GetValues(typeof(possibleCards));
+        foreach (var entry in entries)
+        {
+            yield return (possibleCards)entry;
+        }
+    }
+
     public static Card PickRandomObj(BoardState board)
     {
         return Init(board,PickRandom(board));
