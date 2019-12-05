@@ -7,6 +7,7 @@ using System.Text;
 
 public class LightLayout
 {
+    #region placements
     static PlacePlayer[] playerPlacements = new PlacePlayer[]
     {
         new PlacePlayer(0,0,1),
@@ -101,6 +102,7 @@ public class LightLayout
     };
 
     static Placement exit = new Placement(6, 12);
+    #endregion
 
     public static void InitLayout(BoardState board, bool start)
     {

@@ -25,7 +25,7 @@ public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler 
             if (player.playingCard != this.card)
             {
                 player.playingCard = this.card;
-                manager.RecoveringGrids();
+                manager.RecoveringGrids(false);
                 manager.HighlightingPossibilities(card);
                 manager.instruction.text = string.Format("You selected the" + card.getName() + "!");
             }

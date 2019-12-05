@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class UIGrid : MonoBehaviour, IPointerClickHandler
+public class UIGrid : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public GridInfo info;
 
@@ -66,5 +67,48 @@ public void OnPointerClick(PointerEventData eventData)
             }
         }
         Debug.Log(this.info.row + "," + this.info.column);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        var tooltip = info.board.manager.tooltip;
+        
+        Text tooltipText = tooltip.transform.GetComponentInChildren<Text>();
+        if (info.containsCard)
+        {
+            Positioning(tooltip); ;
+            tooltipText.text = "Card";
+        }
+        else if (info.containsEve)
+        {
+            Positioning(tooltip);
+            tooltipText.text = "Event";
+        }
+        else if (info.containsItem)
+        {
+            Positioning(tooltip);
+            tooltipText.text = "Item";
+        }
+        else if (info.obstacle)
+        {
+            Positioning(tooltip);
+            tooltipText.text = "Obstacle";
+        }
+        else if (info.exit) {
+            Positioning(tooltip);
+            tooltipText.text = "Exit";
+        }
+        else tooltip.gameObject.SetActive(false);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        info.board.manager.tooltip.gameObject.SetActive(false);
+    }
+
+    void Positioning(Image tooltip) {
+        tooltip.gameObject.SetActive(true);
+        Vector2 pos = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+        tooltip.transform.position = pos;
     }
 }

@@ -67,9 +67,9 @@ public class MatureManager : MonoBehaviour {
     public Text actionsCount;
     public Text tempInfo;
     public string defaultText;
-    public Text winText;
     public GameObject winPanel;
     public Text eveText;
+    public Image tooltip;
 
     public Button temp;
     public Button hide;
@@ -82,6 +82,7 @@ public class MatureManager : MonoBehaviour {
     public Sprite longArm;
     public Sprite longMug;
     public Sprite teleBlade;
+    public Sprite dagger;
     public Text itemName;
     public Text itemDescrib;
 
@@ -106,6 +107,7 @@ public class MatureManager : MonoBehaviour {
     public Sprite greenCell;
     #endregion 
     public List<GridInfo> highlightedGrids = new List<GridInfo>();
+    public List<GridInfo> highlightedBasics = new List<GridInfo>();
     protected GameClient client;
 
     public static GameStart startType = GameStart.server;
@@ -134,7 +136,6 @@ public class MatureManager : MonoBehaviour {
             //GameOver Scene: team (int) wins;
             //cant take any more actions;
             winPanel.SetActive(true);
-            winText.text = "Team " + team + " wins!";
         };
 
         this.board.playerMoves = (player, from, to,msg) =>
@@ -221,7 +222,8 @@ public class MatureManager : MonoBehaviour {
             currentPlayer.gameObject.GetComponent<UIPlayer>().player = newPlayer;
 
             UpdateAnimation(newPlayer, newPlayer.ghost, true);
-
+            RecoveringGrids(true);
+            HighlightingBasicMoves();
 
             if (board.currentPlayer.ghost)
             {
@@ -344,6 +346,10 @@ public class MatureManager : MonoBehaviour {
 
     public void SkipAction() {
         //for playtesting.
+        if (board.currentTurn >= board.maxTurns)
+        {
+            return;
+        }
         board.currentPlayer.UseAction(true);
     }
     public void HideInventory()
@@ -371,9 +377,10 @@ public class MatureManager : MonoBehaviour {
         }
         background.transform.GetChild(0).gameObject.SetActive(board.isLight);
         background.transform.GetChild(1).gameObject.SetActive(!board.isLight);
+
         if (board.isLight)
         {
-            LightLayout.InitLayout(board, false);
+            //LightLayout.InitLayout(board, false);
             foreach (var cell in board.lightGrids)
             {
                 cell.InitGameObject(this,start, board.isLight);
@@ -381,22 +388,23 @@ public class MatureManager : MonoBehaviour {
         }
         if (!board.isLight)
         {
-            DarkLayout.InitLayout(board);
+            //DarkLayout.InitLayout(board);
             foreach (var cell in board.darkGrids)
             {
                 cell.InitGameObject(this,start, board.isLight);
             }
         }
     }
+
+
+
     public void CellDisplay(GridInfo g)
     {
         var obj = GameObject.Instantiate(cellPrefab);
         obj.transform.SetParent(parent.transform);
 
-            obj.GetComponent<UIGrid>().info = g;
-            g.cell = obj;
-
-   
+        obj.GetComponent<UIGrid>().info = g;
+        g.cell = obj; 
         obj.transform.localPosition = new Vector3(gridSize * g.column, gridSize * g.row, 0);
     }
     public void ArrangeCard(PlayerState player, Dictionary<Card, Image> displayedCards) {
@@ -457,6 +465,10 @@ public class MatureManager : MonoBehaviour {
         {
             return;
         }
+        if(displayedItems.ContainsKey(item))
+        {
+            return;
+        }
         Image img = Image.Instantiate(this.board.manager.imgPrefab);
         img.sprite = GetItemSprite(item);
         img.transform.SetParent(this.itemInventory.transform);
@@ -501,7 +513,6 @@ public class MatureManager : MonoBehaviour {
         currentPlayer.playerOG.GetComponent<Animator>().SetBool("isGhost",isGhost);
         currentPlayer.playerOG.GetComponent<Animator>().SetBool("isTurn", isTurn);
     }
-
 
     public void MouseHoverCard(Transform card, Vector3 localPos, Card c) {
         poppedCard.transform.localPosition = localPos;
@@ -566,7 +577,7 @@ public class MatureManager : MonoBehaviour {
         if (item is LongArm) return longArm;
         if (item is LongMug) return longMug;
         if (item is Blade) return teleBlade;
-
+        if (item is Dagger) return dagger;
         return null;
     }
     public Sprite GetEveSprite(EventToken eve) {
@@ -591,7 +602,8 @@ public class MatureManager : MonoBehaviour {
     public void HighlightingPossibilities(Card card) {
         foreach(GridInfo grid in board.GetCurrentGrids())
         {
-            if (card.canMove(TargetPlayer(), grid)) {
+            if (card.canMove(TargetPlayer(), grid))
+            {
                 SpriteRenderer renderer = grid.cell.GetComponent<SpriteRenderer>();
                 renderer.sprite = greenCell;
                 Color c = renderer.color;
@@ -602,7 +614,21 @@ public class MatureManager : MonoBehaviour {
         }
     }
 
-    public void RecoveringGrids() {
+    public void HighlightingBasicMoves() {
+        foreach (GridInfo grid in this.board.currentPlayer.GetAdjacentGrids())
+        {
+            if (!grid.obstacle && grid.player == null) {
+                SpriteRenderer renderer = grid.cell.GetComponent<SpriteRenderer>();
+                renderer.sprite = greenCell;
+                Color c = renderer.color;
+                c.a = 1;
+                renderer.color = c;
+                highlightedBasics.Add(grid);
+            }
+        }
+    }
+
+    public void RecoveringGrids(bool moved) {
         foreach (GridInfo grid in highlightedGrids) {
             SpriteRenderer renderer = grid.cell.GetComponent<SpriteRenderer>();
             renderer.sprite = whiteCell;
@@ -611,6 +637,18 @@ public class MatureManager : MonoBehaviour {
             renderer.color = c;
         }
         highlightedGrids.Clear();
+        if (moved)
+        {
+            foreach (GridInfo grid in highlightedBasics)
+            {
+                SpriteRenderer renderer = grid.cell.GetComponent<SpriteRenderer>();
+                renderer.sprite = whiteCell;
+                Color c = renderer.color;
+                c.a = 60 / 255f;
+                renderer.color = c;
+            }
+            highlightedBasics.Clear();
+        }
     }
 
     public PlayerState PlayerInfoChanged(int i)

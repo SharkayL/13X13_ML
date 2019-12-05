@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MLAgents;
+using System.Threading.Tasks;
 
 public class PlayerAcademy : Academy
 {
     public BoardState board;
+    public bool slowPlay = true;
+    public bool busy = false;
     MatureManager manager;
     List<PlayerState> availablePlayers;
     Dictionary<int, PlayerAgent> agents = new Dictionary<int, PlayerAgent>();
@@ -16,6 +19,7 @@ public class PlayerAcademy : Academy
         manager.Start();
         board = manager.board;
         availablePlayers = new List<PlayerState>(board.players);
+        //availablePlayers.RemoveAt(0);
     }
 
     public PlayerState GetSlot(PlayerAgent agent)
@@ -32,8 +36,18 @@ public class PlayerAcademy : Academy
         var players = board.players;
         foreach(var player in players)
         {
-            agents[player.id].player = player;
+            var playerId = player.id;
+            if(agents.ContainsKey(playerId))
+            {
+                agents[playerId].player = player;
+            }
         }
+    }
+
+    public async void StepLater(PlayerAgent agent)
+    {
+        await Task.Delay(200);
+        agent.RequestDecision();
     }
 
     public override void AcademyStep()
@@ -41,11 +55,27 @@ public class PlayerAcademy : Academy
         if(board.currentTurn == board.maxTurns)
         {
             AcademyDone();
+        }
+        if(busy)
+        {
             return;
         }
+
         var playerId = board.currentPlayer.id;
-        var agent = agents[playerId];
-        agent.RequestDecision();
+        PlayerAgent agent = null;
+        agents.TryGetValue(playerId,out agent);
+        if(agent != null) {
+            busy = true;
+            if (slowPlay)
+            {
+                StepLater(agent);
+            }
+            else
+            {
+                agent.RequestDecision();
+            }
+
+        }
     }
 
     public void AcademyDone()

@@ -15,7 +15,7 @@ public class BoardState {
     public bool isLight = true;
     public int currentTurn = 0;
     public PlayerState currentPlayer;
-    public int maxTurns = 120;
+    public int maxTurns = 40;
     public GameObject cellPrefab;
     public GameObject parent;
     public MatureManager manager;
@@ -37,6 +37,11 @@ public class BoardState {
     public System.Random random;
     public int randomSeed;
 
+    public List<AdditionalBoards> usedBoards = new List<AdditionalBoards>();
+    public List<AdditionalBoards> unusedBoards;
+    int roundsToFlip;
+    AdditionalBoards currentLayout;
+
     public GridInfo[,] GetCurrentGrids() {
         if (isLight)
         {
@@ -57,6 +62,7 @@ public class BoardState {
         return nextItemId++;
     }
 
+    #region Notifications
     public void NotifyGameover(int team,bool msg=true) {
         if (teamWins != null) {
             over = true;
@@ -93,7 +99,8 @@ public class BoardState {
         if(playerMoves != null)
         {
             playerMoves(player,from,to,msg);
-            manager.RecoveringGrids();
+            manager.RecoveringGrids(true);
+            manager.HighlightingBasicMoves();
         }
     }
 
@@ -134,7 +141,7 @@ public class BoardState {
             PlayerTriggersEve(player, eve,msg);
         }
     }
-
+    #endregion
     public GridInfo GetGrid(int col,int row)
     {
         if (!isLight) {
@@ -175,6 +182,7 @@ public class BoardState {
         players = new List<PlayerState>();
         currentTurn = 0;
         this.random = new System.Random(seed);
+        roundsToFlip = random.Next(3, 6);
         this.cardDatabase = new Dictionary<int, Card>();
         this.itemDatabase = new Dictionary<int, Item>();
         for (int i = 0; i < 4; ++i)
@@ -198,6 +206,8 @@ public class BoardState {
             }
         }
         LightLayout.InitLayout(this, true);
+        currentLayout = null;
+        unusedBoards = AdditionalBoards.Boards();
         foreach (var cell in lightGrids)
         {
             cell.InitGameObject(manager,true, isLight);
@@ -225,23 +235,63 @@ public class BoardState {
             //Return to mainMenu;
             return;
         }
-        if (flipped) {
-            BoardFlip();
-        }
+
         currentPlayer = players[currentTurn % players.Count];
+        if (currentPlayer.id == 0)
+        {
+            roundsToFlip -= 1;
+            if (currentLayout != null)
+            {
+                UpdatingObstacles(currentLayout);
+            }           
+        }
+            if (aboutToFlip)
+            {
+                BoardFlip();
+            }
         currentPlayer.actionCount = defaultActionCount;
         if (currentPlayer.lessAction) {
             currentPlayer.UseAction();
             currentPlayer.lessAction = false;
         }
         this.NotifyPlayerTurnStarted(currentPlayer, oldPlayer,true);
+        
         //Vincent Add
         manager.actionsCount.text = defaultActionCount.ToString();
     }
 
+    void UpdatingObstacles(AdditionalBoards layout) {
+        if (layout.pendingObstacles == null) {
+            return;
+        }
+        for (int i = 0; i < 2; ++i)
+        {
+            if (layout.pendingObstacles.Count <= 0) {
+                return;
+            }
+            int index = random.Next(0, layout.pendingObstacles.Count);
+            GridInfo info = GetGrid(layout.pendingObstacles[index]);
+            info.obstacle = true;
+            info.InitGameObject(manager, false, isLight);
+            layout.pendingObstacles.RemoveAt(index);    
+        }
+    }
+
     public void BoardFlip() {
+        var board = PickBoard();
+        currentLayout = board;
+        if (board == null)
+        {
+            return;
+        }
         isLight = !isLight;
         manager.DestroyCurrentBoard();
+        foreach(var grid in this.GetCurrentGrids())
+        {
+            grid.Clear();
+        }
+        roundsToFlip = random.Next(3, 6);
+        board.InitLayout(this, roundsToFlip);
         manager.BoardLayout(false);
         foreach (var player in players)
         {
@@ -250,6 +300,7 @@ public class BoardState {
             player.currentCell = GetGrid(column, 12 - row);
             player.playerOG.GetComponent<Animator>().enabled = true;
         }
+        
     }
 
     public int CurrentPlayerNumber(int currentTurn) {
@@ -293,9 +344,51 @@ public class BoardState {
         return null;
     }
 
-    public bool flipped {
+    public bool aboutToFlip {
         get {
-            return (int)currentTurn % 16 == 0 && currentTurn != 0;
+            //return (int)currentTurn % 16 == 0 && currentTurn != 0;
+            return (int)roundsToFlip <= 0 && currentTurn != 0;
         }
+    }
+
+    public AdditionalBoards PickBoard() {
+        AdditionalBoards newBoard = SelectRandomBoard(unusedBoards);
+        if(newBoard == null)
+        {
+            newBoard = SelectRandomBoard(usedBoards);
+            if (newBoard == null) {
+                //no flip
+                return null;
+            }
+        }
+        unusedBoards.Remove(newBoard);
+        usedBoards.Add(newBoard);
+        return newBoard;
+    }
+
+    protected AdditionalBoards SelectRandomBoard(List<AdditionalBoards> boards)
+    {
+        AdditionalBoards newBoard = null;
+        List<AdditionalBoards> possibleBoards = new List<AdditionalBoards>(boards);
+        do
+        {
+            if (possibleBoards.Count == 0)
+            {
+                break;
+            }
+            newBoard = possibleBoards[random.Next(0, possibleBoards.Count)];
+            possibleBoards.Remove(newBoard);
+        }
+        while (WinnerOnExit(newBoard));
+        return newBoard;
+    }
+
+    bool WinnerOnExit(AdditionalBoards board) {
+        foreach (var player in players) {
+            if (board.exit.row == player.currentCell.row && board.exit.col == player.currentCell.column && player.canWin) {
+                return true;
+            }
+        }
+        return false;
     }
 }

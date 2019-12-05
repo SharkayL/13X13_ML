@@ -25,6 +25,7 @@ public class PlayerState
 
     public bool lessAction = false;
     public bool noItem = false;
+    public bool canWin = false;
 
     public PlayerState(BoardState board,int id)
     {
@@ -133,21 +134,21 @@ public class PlayerState
 
     public IEnumerable<GridInfo> GetAdjacentGrids()
     {
-        if(this.row > 0)
-        {
-            yield return board.GetGrid(this.col, this.row - 1);
-        }
         if(this.row < 12)
         {
-            yield return board.GetGrid(this.col, this.row + 1);
+            yield return board.GetGrid(this.col, 12-this.row - 1);
+        }
+        if(this.row > 0)
+        {
+            yield return board.GetGrid(this.col, 12-this.row + 1);
         }
         if(this.col > 0)
         {
-            yield return board.GetGrid(this.col-1, this.row);
+            yield return board.GetGrid(this.col-1, 12-this.row);
         }
         if (this.col < 12)
         {
-            yield return board.GetGrid(this.col + 1, this.row);
+            yield return board.GetGrid(this.col + 1, 12-this.row);
         }
     }
 
@@ -158,7 +159,14 @@ public class PlayerState
         this.board.NotifyPlayerMoved(this, oldCell, grid, msg);
         if (grid.exit && !this.ghost)
         {
-            board.NotifyGameover(this.team);
+            if (canWin && !board.isLight)
+            {
+                board.NotifyGameover(this.team);
+            }
+            else if(board.isLight)
+            {
+                canWin = true;
+            }
         }
     }
 
@@ -195,6 +203,7 @@ public class PlayerState
     public Card PickRandomCard()
     {
         //int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.movementCards.Count));
+
         var index = board.random.Next(0, this.movementCards.Count);
         var card = movementCards[index];
         //Debug.Log(card.GetType().Name);
@@ -240,7 +249,7 @@ public class PlayerState
         this.board.NotifyItemGotten(this, item,msg);
         
         items.Add(item);
-        Debug.Log(item.GetType().Name);
+        //Debug.Log(item.GetType().Name);
     }
 
     public void TriggerRandomEvent(bool msg=false)

@@ -50,7 +50,20 @@ public class PlayerAgent : Agent
         if(grid.exit)
         {
             //EXIT
-            return 10;
+            if(board.isLight)
+            {
+                if(!player.canWin)
+                {
+                    return 10;
+                }
+            }
+            else
+            {
+                if(player.canWin)
+                {
+                    return 10;
+                }
+            }
         }
         if(grid.obstacle)
         {
@@ -121,6 +134,7 @@ public class PlayerAgent : Agent
         var minAction = vectorAction[0];
         var originalPosition = player.currentCell;
         int boardSize = 13 * 13;
+        bool couldWin = player.canWin;
         for (int i = 1; i < boardSize;i++)
         {
             minAction = Math.Min(minAction, vectorAction[i]);
@@ -138,6 +152,7 @@ public class PlayerAgent : Agent
             }
         }
         float itemDecisionWeight = 0;
+
         bool usingItem = false;
         PossibleItems selectedItem = PossibleItems.blade;
         foreach(PossibleItems item in Item.ListItems())
@@ -170,6 +185,10 @@ public class PlayerAgent : Agent
             GridInfo adjacentGrid = null;
             foreach(var grid in player.GetAdjacentGrids())
             {
+                if(grid.obstacle || grid.player != null)
+                {
+                    continue;
+                }
                 var value = vectorAction[grid.index];
                 if(value >= adjacentMoveWeight)
                 {
@@ -177,23 +196,33 @@ public class PlayerAgent : Agent
                     adjacentMoveWeight = value;
                 }
             }
-            player.Move(adjacentGrid, true);
+            if (adjacentGrid != null)
+            {
+                player.Move(adjacentGrid, true);
+            }
             player.UseAction(true);
         }
         var exit = board.GetExit();
-        var distance = 20-player.currentCell.Distance(exit);
+        var reverseDistance = 20-player.currentCell.Distance(exit);
         var diff =  originalPosition.Distance(exit)-player.currentCell.Distance(exit);
-        diff *= distance;
+        diff *= reverseDistance;
         if(diff < 0)
         {
             diff = diff * 1.5f;
         }
-        AddReward(diff);
-        if(player.currentCell.exit)
+        if(board.isLight && !player.canWin || !board.isLight && player.canWin)
+            AddReward(diff);
+        academy.busy = false;
+        if(player.currentCell.exit && !player.ghost && player.canWin != couldWin && board.isLight)
+        {
+            AddReward(10 * (board.maxTurns - board.currentTurn));
+        }
+        if (player.currentCell.exit && !player.ghost && player.canWin && !board.isLight)
         {
             AddReward(100*(board.maxTurns-board.currentTurn));
             //Done();
             academy.AcademyDone();
+            Debug.Log("Won: " + player.id);
         }
     }
 
@@ -209,7 +238,7 @@ public class PlayerAgent : Agent
                 return true;
             }
         }
-        if(useItem && grid.player != null)
+        if(useItem && grid.player != null && !player.ghost)
         {
             var itemObj = this.player.GetItemByType(item);
             if(itemObj != null && itemObj.play(this.player,grid.player,true)) {

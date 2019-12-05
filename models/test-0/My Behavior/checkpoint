@@ -1,2 +1,6 @@
-model_checkpoint_path: "model-373839.cptk"
-all_model_checkpoint_paths: "model-373839.cptk"
+model_checkpoint_path: "model-8212398.cptk"
+all_model_checkpoint_paths: "model-8032733.cptk"
+all_model_checkpoint_paths: "model-8082733.cptk"
+all_model_checkpoint_paths: "model-8132733.cptk"
+all_model_checkpoint_paths: "model-8182733.cptk"
+all_model_checkpoint_paths: "model-8212398.cptk"

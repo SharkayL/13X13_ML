@@ -10,8 +10,6 @@ public class GridInfo
     public GameObject cell;
     public int column;
     public int row;
-    public Item item;
-    public EventToken eventToken;
     public int startingPlayer = -1; //players' icons will be different.
     public bool containsEve = false;
     public bool containsCard = false; //they are movement cards.
@@ -24,6 +22,15 @@ public class GridInfo
     {
         this.column = column;
         this.row = row;
+    }
+
+    public void Clear()
+    {
+        this.containsEve = false;
+        this.containsCard = false;
+        this.containsItem = false;
+        this.obstacle = false;
+        this.exit = false;
     }
 
     public int index
@@ -63,16 +70,6 @@ public class GridInfo
             obj.transform.SetParent(cell.transform);
             obj.transform.localPosition = Vector3.zero;
         }
-    }
-
-    public GridInfo(int column,int row, Item item, EventToken eventToken, bool obstacle, bool exit)
-    {
-        this.column = column;
-        this.row = row;
-        this.item = item;
-        this.eventToken = eventToken;
-        this.obstacle = obstacle;
-        this.exit = exit;
     }
 
     public GameObject InitPlayer(MatureManager manager,int number)

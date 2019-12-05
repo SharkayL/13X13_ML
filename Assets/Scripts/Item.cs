@@ -12,6 +12,7 @@ public enum PossibleItems
     longArm,
     longMug,
     blade,
+    dagger
     //shield
     //ice,
     //earth
@@ -28,7 +29,7 @@ public abstract class Item
         this.id = board.NextItemId();
         board.itemDatabase.Add(this.id, this);
     }
-    public abstract bool canPlay(PlayerState playedBy, PlayerState targetPlayer); // highlight the grid
+    public abstract bool canPlay(PlayerState playedBy, PlayerState targetPlayer); 
 
     public virtual bool play(PlayerState playedBy, PlayerState targetPlayer,bool msg = false)
     {
@@ -75,6 +76,9 @@ public abstract class Item
         if (item == PossibleItems.blade) {
             return new Blade(board);
         }
+        if (item == PossibleItems.dagger) {
+            return new Dagger(board);
+        }
         return null;
     }
 
@@ -99,6 +103,9 @@ public abstract class Item
         if(type == PossibleItems.magnetRed)
         {
             return typeof(MagnetRed);
+        }
+        if (type == PossibleItems.dagger) {
+            return typeof(Dagger);
         }
         return null;
     }
@@ -136,7 +143,7 @@ public class MagnetRed : Item {
 
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
-        if (targetPlayer != null && targetPlayer.movementCards.Count > 0)
+        if (targetPlayer != null && targetPlayer.movementCards.Count > 0 && targetPlayer != playedBy)
         {
             return true;
         }
@@ -190,7 +197,7 @@ public class MagnetBlue : Item
 
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
-        if (targetPlayer != null && targetPlayer.movementCards.Count > 0)
+        if (targetPlayer != null && targetPlayer.movementCards.Count > 0 && targetPlayer != playedBy)
         {
             return true;
         }
@@ -238,7 +245,7 @@ public class LongArm : Item {
 
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
-        if (targetPlayer != null && targetPlayer.items.Count > 0)
+        if (targetPlayer != null && targetPlayer.items.Count > 0 && targetPlayer != playedBy)
         {
             return true;
         }
@@ -278,7 +285,7 @@ public class LongMug : Item
 
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
-        if (targetPlayer != null && targetPlayer.items.Count > 0 && playedBy.items.Count>1)
+        if (targetPlayer != null && targetPlayer.items.Count > 0 && playedBy.items.Count>1 && targetPlayer != playedBy)
         {
             return true;
         }
@@ -320,7 +327,7 @@ public class Blade : Item
 
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
-        if (targetPlayer != null && !targetPlayer.ghost)
+        if (targetPlayer != null && !targetPlayer.ghost && targetPlayer != playedBy)
         {
             return true;
         }
@@ -349,5 +356,61 @@ public class Blade : Item
     public override string getDescription()
     {
         return "Use Teleporation Blade to forcefully swap your current position with a human player's.";
+    }
+}
+
+public class Dagger : Item
+{
+    public Dagger(BoardState board) : base(board)
+    {
+    }
+    public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
+    {
+        if (targetPlayer != null && !targetPlayer.ghost) {
+            if ((playedBy.currentCell.row == targetPlayer.currentCell.row && Mathf.Abs(playedBy.currentCell.column - targetPlayer.currentCell.column) == 1)
+                || (playedBy.currentCell.column == targetPlayer.currentCell.column && Mathf.Abs(playedBy.currentCell.row - targetPlayer.currentCell.row) == 1))
+                {
+                return true;
+            }
+            else return false;
+        }
+        else return false;
+    }
+    public override bool play(PlayerState playedBy, PlayerState targetPlayer, bool msg = false)
+    {
+        if (canPlay(playedBy, targetPlayer))
+        {
+            base.play(playedBy, targetPlayer, msg);
+            if (targetPlayer.movementCards.Count >= 3)
+            {
+                for (int i = 0; i < 3; ++i)
+                {
+                    Card discarded = targetPlayer.PickRandomCard();
+                    targetPlayer.DiscardCard(discarded);
+                    playedBy.AddCard(discarded);
+                }
+            }
+            else if (targetPlayer.movementCards.Count < 3) {
+                for (int i = 0; targetPlayer.movementCards.Count > 0; ++i) {
+                    Card discarded = targetPlayer.PickRandomCard();
+                    targetPlayer.DiscardCard(discarded);
+                    playedBy.AddCard(discarded);
+                }
+            }
+            playedBy.UseAction(false);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public override string getDescription()
+    {
+        return "Use Dagger to forcefullly rob a player standing next to your of 2 cards.";
+    }
+
+    public override string getName()
+    {
+        return "Dagger";
     }
 }
