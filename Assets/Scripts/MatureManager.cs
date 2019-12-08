@@ -72,7 +72,6 @@ public class MatureManager : MonoBehaviour {
     public Image tooltip;
 
     public Button temp;
-    public Button hide;
     bool h = false;
     public GameObject i;
 
@@ -83,17 +82,25 @@ public class MatureManager : MonoBehaviour {
     public Sprite longMug;
     public Sprite teleBlade;
     public Sprite dagger;
+    public Sprite shield;
+    public Sprite landWrath;
+    public Sprite earthPower;
+    public Sprite tableFlip;
+    public Sprite oracle;
     public Text itemName;
     public Text itemDescrib;
 
     [Header("Events")]
-    public Sprite add2C;
-    public Sprite add1I;
-    public Sprite add1B;
-    public Sprite decM;
-    public Sprite ban1I;
-    public Sprite los1C;
-    public Sprite beR;
+    public Sprite bounty;
+    public Sprite substitution;
+    public Sprite combo;
+    public Sprite shackle;
+    public Sprite handcuffs;
+    public Sprite calamity;
+    public Sprite amnesty;
+    public Sprite blindTrade;
+    public Sprite blackHole;
+    public Sprite rubberBand;
     public SpriteRenderer eveImg;
 
     [Header("Cards")]
@@ -167,6 +174,9 @@ public class MatureManager : MonoBehaviour {
         {
             if (player != board.currentPlayer) {
                 return;
+            }
+            if (board.timesToOracle > 0) {
+                --board.timesToOracle;
             }
             DisplayItem(player,item);
         };
@@ -259,7 +269,7 @@ public class MatureManager : MonoBehaviour {
         };
         //board.Init();
         temp.GetComponent<Button>().onClick.AddListener(() => SkipAction());
-        hide.GetComponent<Button>().onClick.AddListener(() => HideInventory());
+
         if(MatureManager.startType == GameStart.server)
         {
             StartServer();
@@ -352,12 +362,6 @@ public class MatureManager : MonoBehaviour {
         }
         board.currentPlayer.UseAction(true);
     }
-    public void HideInventory()
-    {
-        h = !h;
-        i.SetActive(h);
-        cardInventory.SetActive(h);
-    }
 
     public void BoardLayout(bool start)
     {
@@ -419,17 +423,17 @@ public class MatureManager : MonoBehaviour {
                 var key = entry.Key;
                 var obj = entry.Value;
                 int space = (560 - 10 * 2 - 110) / (player.movementCards.Count - 1);
-                obj.transform.localPosition = new Vector3(10 + space * player.CardIndex(key), -10);
+                obj.transform.localPosition = new Vector3(10 + space * player.CardIndex(key), -10, - 1 * player.CardIndex(key));
             }
         }
         else
         {
-            foreach (var entry in displayedCards) {
+            foreach (var entry in displayedCards)
+            {
                 var key = entry.Key;
                 var obj = entry.Value;
                 obj.transform.localPosition = new Vector3(10 + 110 * player.CardIndex(key), -10);
             }
-
         }
     }
 
@@ -562,6 +566,18 @@ public class MatureManager : MonoBehaviour {
         return null;
     }
 
+    public GridInfo DroppedOnGrid()
+    {
+        UIGrid[] grids = FindObjectsOfType<UIGrid>();
+        foreach (var grid in grids)
+        {
+            if (grid.IsDropped()) {
+                return grid.info;
+            }
+        }
+        return null;
+    }
+
     public void DestroyCurrentBoard() {
 
         UIGrid[] cells = FindObjectsOfType<UIGrid>();
@@ -578,16 +594,24 @@ public class MatureManager : MonoBehaviour {
         if (item is LongMug) return longMug;
         if (item is Blade) return teleBlade;
         if (item is Dagger) return dagger;
+        if (item is Shield) return shield;
+        if (item is LandWrath) return landWrath;
+        if (item is EarthPower) return earthPower;
+        if (item is TableFlip) return tableFlip;
+        if (item is Oracle) return oracle;
         return null;
     }
     public Sprite GetEveSprite(EventToken eve) {
-        if (eve is Adding2Cards) return add2C;
-        if (eve is Adding1Item) return add1I;
-        if (eve is Adding1Both) return add1B;
-        if (eve is DecreasingMoves) return decM;
-        if (eve is BanninngItems) return ban1I;
-        if (eve is Losing1Card) return los1C;
-        if (eve is BecomingRegular) return beR;
+        if (eve is Bounty) return bounty;
+        if (eve is Substitution) return substitution;
+        if (eve is Combo) return combo;
+        if (eve is Shackle) return shackle;
+        if (eve is Handcuffs) return handcuffs;
+        if (eve is Calamity) return calamity;
+        if (eve is Amnesty) return amnesty;
+        if (eve is BlindTrade) return blindTrade;
+        if (eve is BlackHole) return blackHole;
+        if (eve is RubberBand) return rubberBand;
         return null;
     }
     public Sprite GetCardSprite(Card card) {
@@ -661,4 +685,5 @@ public class MatureManager : MonoBehaviour {
         nextPlayer2.GetComponentInChildren<Text>().text = string.Format("<b>{0}</b>{1}\n<b>{2}</b>{3}", "Cards: ", PlayerInfoChanged(2).movementCards.Count, "Items: ", PlayerInfoChanged(2).items.Count);
         nextPlayer3.GetComponentInChildren<Text>().text = string.Format("<b>{0}</b>{1}\n<b>{2}</b>{3}", "Cards: ", PlayerInfoChanged(3).movementCards.Count, "Items: ", PlayerInfoChanged(3).items.Count);
     }
+
 }

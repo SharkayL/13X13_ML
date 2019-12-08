@@ -25,7 +25,8 @@ public class PlayerState
 
     public bool lessAction = false;
     public bool noItem = false;
-    public bool canWin = false;
+    public bool canWinLight = false;
+    public bool canWinDark = false;
 
     public PlayerState(BoardState board,int id)
     {
@@ -69,7 +70,15 @@ public class PlayerState
                     if (value.containsItem)
                     {
                         if (this.items.Count < 5)
-                            AddRandomItem();
+                        {
+                            if (board.timesToOracle == 0)
+                            {
+                                Item oracle = Item.Init(board, PossibleItems.oracle);
+                                AddItem(oracle);
+                                --board.timesToOracle;
+                            }
+                            else AddRandomItem();
+                        }
                     }
                     if (value.containsCard)
                     {
@@ -152,20 +161,47 @@ public class PlayerState
         }
     }
 
+    public IEnumerable<GridInfo> GetDiagonalGrids()
+    {
+        if (this.row < 12 && this.col < 12)
+        {
+            yield return board.GetGrid(this.col + 1, 12 - this.row - 1);
+        }
+        if (this.row > 0 && this.col < 12)
+        {
+            yield return board.GetGrid(this.col + 1, 12 - this.row + 1);
+        }
+        if (this.col > 0 && row < 12)
+        {
+            yield return board.GetGrid(this.col - 1, 12 - this.row -1);
+        }
+        if (this.col > 0 && row > 0)
+        {
+            yield return board.GetGrid(this.col - 1, 12 - this.row + 1);
+        }
+    }
+
     public void Move(GridInfo grid,bool msg = false)
     {
         var oldCell = this.currentCell;
         this.currentCell = grid;
         this.board.NotifyPlayerMoved(this, oldCell, grid, msg);
+        // player has to reach both exit at least once to win.
         if (grid.exit && !this.ghost)
         {
-            if (canWin && !board.isLight)
+            if(board.isLight)
+            {
+                canWinLight = true;
+                this.board.GetTeammate(this).canWinLight = true;
+            }
+            else if(!board.isLight)
+            {
+                canWinDark = true;
+                this.board.GetTeammate(this).canWinDark = true;
+            }
+            if (canWinLight && canWinDark)
             {
                 board.NotifyGameover(this.team);
-            }
-            else if(board.isLight)
-            {
-                canWin = true;
             }
         }
     }
@@ -202,17 +238,13 @@ public class PlayerState
     
     public Card PickRandomCard()
     {
-        //int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.movementCards.Count));
-
         var index = board.random.Next(0, this.movementCards.Count);
         var card = movementCards[index];
-        //Debug.Log(card.GetType().Name);
         return card;
     }
 
     public Item PickRandomItem()
     {
-        //int index = (int)Math.Round((float)UnityEngine.Random.Range(1, this.items.Count));
         var index = board.random.Next(0, this.items.Count);
         var item = items[index];
         return item;

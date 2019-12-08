@@ -8,7 +8,6 @@ public class UIPlayer : MonoBehaviour
     public PlayerState player;
     public Item item;
     Collider2D collider;
-    public bool hover = false;
 
     // Start is called before the first frame update
     void Start()

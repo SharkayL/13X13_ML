@@ -76,15 +76,29 @@ public abstract class Card
     }
     public abstract string getName();
     public abstract string getDescription();
-    public static possibleCards PickRandom(BoardState state)
+    public static possibleCards PickRandom(BoardState board)
     {
-        var entries = Enum.GetValues(typeof(possibleCards));
-        var index = state.random.Next(0, entries.Length);
-        //var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
-        return (possibleCards)entries.GetValue(index);
+        var index = board.random.Next(0, 100);
+        if (index >= 0 && index < 22) {
+            return possibleCards.diagonalBy1;
+        }
+        if(index >= 22 && index < 44) {
+            return possibleCards.diagonalBy1;
+        }
+        if (index >= 44 && index < 64) {
+            return possibleCards.adjacentBy2;
+        }
+        if(index>=64 && index < 84) {
+            return possibleCards.diagonalBy2;
+        }       
+        return possibleCards.straightBy3;
+        //var entries = Enum.GetValues(typeof(possibleCards));
+        //var index = state.random.Next(0, entries.Length);
+        ////var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
+        //return (possibleCards)entries.GetValue(index);
     }
 
-    public static Card Init(BoardState board,possibleCards card)
+    public static Card Init(BoardState board, possibleCards card)
     {
         //if (card == possibleCards.adjacentBy1)
         //{
@@ -175,7 +189,7 @@ public abstract class Card
     }
     public bool ObstacleCheck(PlayerState playedBy, GridInfo moveTo)
     {
-        GridInfo midGrid = board.GetGrid(playedBy.col + (moveTo.column - playedBy.col) / 2, playedBy.row + (moveTo.row - playedBy.row) / 2);
+        GridInfo midGrid = board.GetGrid(playedBy.col + (moveTo.column - playedBy.col) / 2, (12 - playedBy.row) + (playedBy.row - moveTo.row) / 2);
         Debug.Log(midGrid.obstacle + "," + midGrid.row + "," + midGrid.column);
         return midGrid.obstacle;
     }

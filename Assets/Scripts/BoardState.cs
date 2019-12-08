@@ -41,6 +41,7 @@ public class BoardState {
     public List<AdditionalBoards> unusedBoards;
     int roundsToFlip;
     AdditionalBoards currentLayout;
+    public int timesToOracle;
 
     public GridInfo[,] GetCurrentGrids() {
         if (isLight)
@@ -183,6 +184,7 @@ public class BoardState {
         currentTurn = 0;
         this.random = new System.Random(seed);
         roundsToFlip = random.Next(3, 6);
+        timesToOracle = random.Next(2, 8);
         this.cardDatabase = new Dictionary<int, Card>();
         this.itemDatabase = new Dictionary<int, Item>();
         for (int i = 0; i < 4; ++i)
@@ -271,8 +273,9 @@ public class BoardState {
             }
             int index = random.Next(0, layout.pendingObstacles.Count);
             GridInfo info = GetGrid(layout.pendingObstacles[index]);
-            info.obstacle = true;
-            info.InitGameObject(manager, false, isLight);
+            //info.obstacle = true;
+            //info.InitGameObject(manager, false, isLight);
+            AddObstacle(info);
             layout.pendingObstacles.RemoveAt(index);    
         }
     }
@@ -385,10 +388,22 @@ public class BoardState {
 
     bool WinnerOnExit(AdditionalBoards board) {
         foreach (var player in players) {
-            if (board.exit.row == player.currentCell.row && board.exit.col == player.currentCell.column && player.canWin) {
+            if (board.exit.row == player.currentCell.row && board.exit.col == player.currentCell.column ) {
                 return true;
             }
         }
         return false;
+    }
+
+    public void AddObstacle(GridInfo grid)
+    {
+        grid.obstacle = true;
+        grid.InitGameObject(manager, false, isLight);
+    }
+    public void RemoveObstacle(GridInfo grid)
+    {
+        grid.obstacle = false;
+        var obs = grid.cell.transform.GetComponent<UIGrid>();
+        GameObject.Destroy(obs.gameObject);
     }
 }

@@ -8,14 +8,15 @@ public enum PossibleItems
 {
     magnetRed,
     magnetBlue,
-    //bookworm,
     longArm,
     longMug,
     blade,
-    dagger
-    //shield
-    //ice,
-    //earth
+    dagger,
+    shield,
+    landWrath,
+    earthPower,
+    tableFlip,
+    oracle
 }
 
 public abstract class Item
@@ -37,6 +38,11 @@ public abstract class Item
         board.currentPlayer.DiscardItem(this);
         return false;
     }
+    public virtual bool play(PlayerState playedBy, GridInfo grid, bool msg = false)
+    {
+        board.currentPlayer.DiscardItem(this);
+        return false;
+    }
 
     public abstract string getName();
     public abstract string getDescription();
@@ -50,13 +56,13 @@ public abstract class Item
         }
     }
 
-    public static PossibleItems PickRandom(BoardState board)
-    {
-        var entries = Enum.GetValues(typeof(PossibleItems));
-        var index = board.random.Next(0, entries.Length);
-        //var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
-        return (PossibleItems)entries.GetValue(index);
-    }
+    //public static PossibleItems PickRandom(BoardState board)
+    //{
+    //    var entries = Enum.GetValues(typeof(PossibleItems));
+    //    var index = board.random.Next(0, entries.Length);
+    //    //var index = (int)Math.Floor((float)UnityEngine.Random.Range(0, entries.Length));
+    //    return (PossibleItems)entries.GetValue(index);
+    //}
 
     public static Item Init(BoardState board, PossibleItems item)
     {
@@ -78,6 +84,23 @@ public abstract class Item
         }
         if (item == PossibleItems.dagger) {
             return new Dagger(board);
+        }
+        if (item == PossibleItems.shield) {
+            return new Shield(board);
+        }
+        if (item == PossibleItems.landWrath)
+        {
+            return new LandWrath(board);
+        }
+        if (item == PossibleItems.earthPower)
+        {
+            return new EarthPower(board);
+        }
+        if (item == PossibleItems.tableFlip) {
+            return new TableFlip(board);
+        }
+        if (item == PossibleItems.oracle) {
+            return new Oracle(board);
         }
         return null;
     }
@@ -107,6 +130,23 @@ public abstract class Item
         if (type == PossibleItems.dagger) {
             return typeof(Dagger);
         }
+        if (type == PossibleItems.shield) {
+            return typeof(Shield);
+        }
+        if (type == PossibleItems.landWrath)
+        {
+            return typeof(LandWrath);
+        }
+        if (type == PossibleItems.earthPower)
+        {
+            return typeof(EarthPower);
+        }
+        if (type == PossibleItems.tableFlip) {
+            return typeof(TableFlip);
+        }
+        if (type == PossibleItems.oracle) {
+            return typeof(Oracle);
+        }
         return null;
     }
 
@@ -126,10 +166,44 @@ public abstract class Item
 
     public static Item PickRandomObj(BoardState board)
     {
-        return Init(board, PickRandom(board));
+        var index = board.random.Next(0, 100);
+        if (index >= 0 && index < 12)
+        {
+            return Init(board, PossibleItems.magnetRed);
+        }
+        if (index >= 12 && index < 24)
+        {
+            return Init(board, PossibleItems.magnetBlue);
+        }
+        if (index >= 24 && index < 36)
+        {
+            return Init(board, PossibleItems.longArm);
+        }
+        if (index >= 36 && index < 51)
+        {
+            return Init(board, PossibleItems.longMug);
+        }
+        if (index >= 51 && index < 61) {
+            return Init(board, PossibleItems.blade);
+        }
+        if (index >= 61 && index < 69) {
+            return Init(board, PossibleItems.landWrath);
+        }
+        if (index >= 69 && index < 79) {
+            return Init(board, PossibleItems.earthPower);
+        }
+        if (index >= 79 && index < 86) {
+            return Init(board, PossibleItems.dagger);
+        }
+        if (index >= 86 && index < 97) {
+            return Init(board, PossibleItems.shield);
+        }
+        if (index >= 97 && index <= 100) {
+            return Init(board, PossibleItems.tableFlip);
+        }
+        return null;
+        //return Init(board, PickRandom(board));
     }
-
-    //public abstract GameObject DisplayItem(MatureManager manager);
 
     public bool UsedItem() {
         return false;
@@ -161,7 +235,18 @@ public class MagnetRed : Item {
                     playedBy.UseAction();
                     return true;
                 }
+                if (item is Shield) {
+                    targetPlayer.DiscardItem(item);
+                    playedBy.UseAction();
+                    return true;
+                }
             }
+            if (targetPlayer.movementCards.Count >= 2) {
+                Card discarded1 = targetPlayer.PickRandomCard();
+                targetPlayer.DiscardCard(discarded1);
+                playedBy.AddCard(discarded1);
+            }
+            
             Card discarded = targetPlayer.PickRandomCard();
             targetPlayer.DiscardCard(discarded);
             playedBy.AddCard(discarded);
@@ -181,13 +266,6 @@ public class MagnetRed : Item {
         return "Use Magnet Red to steal a movement card from a random opponent. If the opponent has the same item too, no card will be stole but items will be discarded.";
     }
 
-
-    //public override GameObject DisplayItem(MatureManager manager)
-    //{
-    //    itemToken = manager.item; 
-    //    this.itemToken = MatureManager.Instantiate(manager.item);
-    //    return itemToken;
-    //}
 }
 public class MagnetBlue : Item
 {
@@ -217,6 +295,18 @@ public class MagnetBlue : Item
                     playedBy.UseAction();
                     return true;
                 }
+                if (item is Shield)
+                {
+                    targetPlayer.DiscardItem(item);
+                    playedBy.UseAction();
+                    return true;
+                }
+            }
+            if (targetPlayer.movementCards.Count >= 2)
+            {
+                Card discarded1 = targetPlayer.PickRandomCard();
+                targetPlayer.DiscardCard(discarded1);
+                playedBy.AddCard(discarded1);
             }
             Card discarded = targetPlayer.PickRandomCard();
             targetPlayer.DiscardCard(discarded);
@@ -258,6 +348,15 @@ public class LongArm : Item {
         if (canPlay(playedBy, targetPlayer))
         {
             base.play(playedBy, targetPlayer, msg);
+            foreach (var item in targetPlayer.items)
+            {
+                if (item is Shield)
+                {
+                    targetPlayer.DiscardItem(item);
+                    playedBy.UseAction();
+                    return true;
+                }
+            }
             Item discarded = targetPlayer.PickRandomItem();
             targetPlayer.DiscardItem(discarded);
             playedBy.AddItem(discarded);
@@ -279,9 +378,7 @@ public class LongArm : Item {
 
 public class LongMug : Item
 {
-    public LongMug(BoardState board) : base(board)
-    {
-    }
+    public LongMug(BoardState board) : base(board){}
 
     public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
     {
@@ -298,6 +395,15 @@ public class LongMug : Item
         if (canPlay(playedBy, targetPlayer))
         {
             base.play(playedBy, targetPlayer, msg);
+            foreach (var item in targetPlayer.items)
+            {
+                if (item is Shield)
+                {
+                    targetPlayer.DiscardItem(item);
+                    playedBy.UseAction();
+                    return true;
+                }
+            }
             Item discardedT = targetPlayer.PickRandomItem();
             Item discardedP = playedBy.PickRandomItem();
             targetPlayer.DiscardItem(discardedT);
@@ -381,6 +487,15 @@ public class Dagger : Item
         if (canPlay(playedBy, targetPlayer))
         {
             base.play(playedBy, targetPlayer, msg);
+            foreach (var item in targetPlayer.items)
+            {
+                if (item is Shield)
+                {
+                    targetPlayer.DiscardItem(item);
+                    playedBy.UseAction();
+                    return true;
+                }
+            }
             if (targetPlayer.movementCards.Count >= 3)
             {
                 for (int i = 0; i < 3; ++i)
@@ -412,5 +527,134 @@ public class Dagger : Item
     public override string getName()
     {
         return "Dagger";
+    }
+}
+
+public class Shield : Item
+{
+    public Shield(BoardState board) : base(board) { }
+    public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
+    {
+        return false;
+    }
+
+    public override string getDescription()
+    {
+        return "Automatically shield from other's steal of cards/items once and then disappear.";
+    }
+
+    public override string getName()
+    {
+        return "Shield";
+    }
+}
+
+public class LandWrath : Item
+{
+    public LandWrath(BoardState board) : base(board) { }
+    public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
+    {
+        return false;
+    }
+    public override bool play(PlayerState playedBy, GridInfo grid, bool msg = false)
+    {
+        base.play(playedBy, grid, msg);
+        if (grid.obstacle) {
+            board.RemoveObstacle(grid);
+            playedBy.UseAction();
+            return true;
+        }
+        else return false;
+    }
+    public override string getDescription()
+    {
+        return "Use it to destroy an obstacle on board.";
+    }
+
+    public override string getName()
+    {
+        return "Land Wrath";
+    }
+}
+
+public class EarthPower : Item
+{
+    public EarthPower(BoardState board) : base(board) { }
+
+    public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
+    {
+        return false;
+    }
+    public override bool play(PlayerState playedBy, GridInfo grid, bool msg = false)
+    {
+        if(grid.player != null)
+        {
+            return false;
+        }
+        if (!grid.containsCard && !grid.containsEve && !grid.containsItem && !grid.exit && !grid.obstacle)
+        {
+            base.play(playedBy, grid, msg);
+            board.AddObstacle(grid);
+            playedBy.UseAction();
+            return true;
+        }
+        else return false;
+    }
+    public override string getDescription()
+    {
+        return "Use it to place an extra obstacle on board at a valid position.";
+    }
+
+    public override string getName()
+    {
+        return "Earth Power";
+    }
+}
+
+public class TableFlip : Item
+{
+    public TableFlip(BoardState board) : base(board) { }
+
+    public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
+    {
+        return false;
+    }
+
+    public override bool play(PlayerState playedBy, GridInfo grid, bool msg = false) {
+        base.play(playedBy, grid, msg);
+        board.BoardFlip();
+        board.manager.RecoveringGrids(true);
+        board.manager.HighlightingBasicMoves();
+        return true;
+    }
+
+    public override string getDescription()
+    {
+        return "Use it anywhere on the board to forcefully change the current board.";
+    }
+
+    public override string getName()
+    {
+        return "Table Flip";
+    }
+}
+
+public class Oracle : Item
+{
+    public Oracle(BoardState board) : base(board) { }
+
+    public override bool canPlay(PlayerState playedBy, PlayerState targetPlayer)
+    {
+        return false;
+    }
+
+    public override string getDescription()
+    {
+        return "The exlusive item. Holding this item will give you one extra card every time your turn starts.";
+    }
+
+    public override string getName()
+    {
+        return "Oracle";
     }
 }

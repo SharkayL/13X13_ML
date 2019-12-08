@@ -42,6 +42,7 @@ public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler 
         {
             return;
         }
+        Debug.Log(card.getName());
         localPos = this.transform.localPosition;
         localPos.y += 10;
         this.manager.MouseHoverCard(this.transform, localPos, card);

@@ -58,15 +58,20 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         if (this) {
             this.transform.SetParent(parent);
             PlayerState targetPlayer = manager.DroppedOnPlayer();
-            if (targetPlayer != null) {
+            GridInfo grid = manager.DroppedOnGrid();
+            if (targetPlayer != null && item.canPlay(manager.board.currentPlayer, targetPlayer))
+            {
                 if (item.play(manager.board.currentPlayer, targetPlayer, true))
                 {
                     manager.instruction.text = "current player used " + item.GetType().Name + " on target player.";
                     //Debug.Log("current player used " + item.GetType().Name + " on target player." );
                 }
             }
-            
-            //Destroy(this);
+            else if (grid != null) {
+                if (item.play(manager.board.currentPlayer, grid, true)) {
+                    manager.instruction.text = "current player used " + item.GetType().Name;
+                }
+            }
         }
     }
 

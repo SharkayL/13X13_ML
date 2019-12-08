@@ -7,7 +7,12 @@ using UnityEngine.UI;
 public class UIGrid : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public GridInfo info;
+    Collider2D collider;
 
+    void Start()
+    {
+        collider = this.GetComponent<Collider2D>();
+    }
 public void OnPointerClick(PointerEventData eventData)
     {
         var board = info.board;
@@ -111,4 +116,16 @@ public void OnPointerClick(PointerEventData eventData)
         Vector2 pos = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
         tooltip.transform.position = pos;
     }
+    public bool IsDropped() {
+        if (collider.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
+        {
+            return true;
+        }
+        return false;
+    }
+    //public void RemoveObstacle()
+    //{
+    //    GameObject obs = this.transform.GetChild(0).gameObject;
+    //    Destroy(obs);
+    //}
 }

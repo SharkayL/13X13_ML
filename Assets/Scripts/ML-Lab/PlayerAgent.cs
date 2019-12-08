@@ -50,20 +50,20 @@ public class PlayerAgent : Agent
         if(grid.exit)
         {
             //EXIT
-            if(board.isLight)
-            {
-                if(!player.canWin)
-                {
-                    return 10;
-                }
-            }
-            else
-            {
-                if(player.canWin)
-                {
-                    return 10;
-                }
-            }
+            //if(board.isLight)
+            //{
+            //    if(!player.canWin)
+            //    {
+            //        return 10;
+            //    }
+            //}
+            //else
+            //{
+            //    if(player.canWin)
+            //    {
+            //        return 10;
+            //    }
+            //}
         }
         if(grid.obstacle)
         {
@@ -134,7 +134,7 @@ public class PlayerAgent : Agent
         var minAction = vectorAction[0];
         var originalPosition = player.currentCell;
         int boardSize = 13 * 13;
-        bool couldWin = player.canWin;
+        //bool couldWin = player.canWin;
         for (int i = 1; i < boardSize;i++)
         {
             minAction = Math.Min(minAction, vectorAction[i]);
@@ -210,20 +210,20 @@ public class PlayerAgent : Agent
         {
             diff = diff * 1.5f;
         }
-        if(board.isLight && !player.canWin || !board.isLight && player.canWin)
-            AddReward(diff);
-        academy.busy = false;
-        if(player.currentCell.exit && !player.ghost && player.canWin != couldWin && board.isLight)
-        {
-            AddReward(10 * (board.maxTurns - board.currentTurn));
-        }
-        if (player.currentCell.exit && !player.ghost && player.canWin && !board.isLight)
-        {
-            AddReward(100*(board.maxTurns-board.currentTurn));
-            //Done();
-            academy.AcademyDone();
-            Debug.Log("Won: " + player.id);
-        }
+        //if(board.isLight && !player.canWin || !board.isLight && player.canWin)
+        //    AddReward(diff);
+        //academy.busy = false;
+        //if(player.currentCell.exit && !player.ghost && player.canWin != couldWin && board.isLight)
+        //{
+        //    AddReward(10 * (board.maxTurns - board.currentTurn));
+        //}
+        //if (player.currentCell.exit && !player.ghost && player.canWin && !board.isLight)
+        //{
+        //    AddReward(100*(board.maxTurns-board.currentTurn));
+        //    //Done();
+        //    academy.AcademyDone();
+        //    Debug.Log("Won: " + player.id);
+        //}
     }
 
 
