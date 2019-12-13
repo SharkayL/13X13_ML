@@ -30,7 +30,7 @@ public abstract class Card
 
     public static bool baseCheck(PlayerState playedBy, GridInfo moveTo)
     {
-        return moveTo.player == null && !moveTo.obstacle;
+        return moveTo.player == null && !moveTo.obstacle && !moveTo.hole;
     }
 
     //public static Card Convert(possibleCards card)
@@ -64,14 +64,14 @@ public abstract class Card
         playedBy.Move(moveTo);
         playedBy.DiscardCard(this);
         playedBy.UseAction();
-        if (playedBy.ghost)
-        {
-            if (board.gameOver)
-            {
-                int winnerTeam = Math.Abs(playedBy.team - 1);
-                board.NotifyGameover(winnerTeam);
-            }
-        }
+        //if (playedBy.ghost)
+        //{
+        //    if (board.gameOver)
+        //    {
+        //        int winnerTeam = Math.Abs(playedBy.team - 1);
+        //        board.NotifyGameover(winnerTeam);
+        //    }
+        //}
         return true;
     }
     public abstract string getName();
@@ -191,7 +191,7 @@ public abstract class Card
     {
         GridInfo midGrid = board.GetGrid(playedBy.col + (moveTo.column - playedBy.col) / 2, (12 - playedBy.row) + (playedBy.row - moveTo.row) / 2);
         Debug.Log(midGrid.obstacle + "," + midGrid.row + "," + midGrid.column);
-        return midGrid.obstacle;
+        return midGrid.obstacle || midGrid.hole;
     }
 }
 
@@ -336,16 +336,16 @@ public class StraightBy3 : Card
         {
             if (moveTo.row == playedBy.row && Math.Abs(moveTo.column - playedBy.col) == 3) {
                 int g = moveTo.column - playedBy.col;
-                if (board.GetGrid(playedBy.col + g / 3, playedBy.row).obstacle) { return false; }
-                if (board.GetGrid(playedBy.col + g / 3 * 2, playedBy.row).obstacle) { return false; }
+                if (board.GetGrid(playedBy.col + g / 3, 12-playedBy.row).obstacle || board.GetGrid(playedBy.col + g / 3, 12-playedBy.row).hole) { return false; }
+                if (board.GetGrid(playedBy.col + g / 3 * 2, 12-playedBy.row).obstacle || board.GetGrid(playedBy.col + g / 3 * 2, 12-playedBy.row).hole) { return false; }
                 else {
                     Debug.Log(playedBy.team);
                     return true; }
             }
             else if (moveTo.column == playedBy.col && Math.Abs(moveTo.row - playedBy.row) == 3) {
                 int g = moveTo.row - playedBy.row;
-                if (board.GetGrid(playedBy.col, playedBy.row + g/3).obstacle) { return false; }
-                if (board.GetGrid(playedBy.col, playedBy.row + g/3*2).obstacle) { return false; }
+                if (board.GetGrid(playedBy.col, 12-playedBy.row - g/3).obstacle || board.GetGrid(playedBy.col, 12-playedBy.row - g / 3).hole) { return false; }
+                if (board.GetGrid(playedBy.col, 12-playedBy.row - g/3*2).obstacle || board.GetGrid(playedBy.col, 12-playedBy.row - g / 3 * 2).hole) { return false; }
                 else return true;
             }
             

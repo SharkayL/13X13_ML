@@ -24,7 +24,6 @@ public class MatureManager : MonoBehaviour {
     public GameObject player2;
     public GameObject player3;
     public GameObject player4;
-    public GameObject ghost;
 
     public List<Sprite> ghostSprites;
     public List<Sprite> humanSprites;
@@ -41,6 +40,7 @@ public class MatureManager : MonoBehaviour {
     public GameObject darkItem;
     public GameObject darkObstacle;
 
+    public GameObject hole;
     public GameObject background;
 
     [Header("Panels")]
@@ -55,7 +55,7 @@ public class MatureManager : MonoBehaviour {
     public Canvas selectionLayer;
     public Image markedDiscard;
     public Button confirmItemSelection;
-    public GameObject poppedCard;
+    public GameObject popLayer;
     bool destroyCard;
     float t = 0;
 
@@ -135,7 +135,7 @@ public class MatureManager : MonoBehaviour {
             return;
         }
         started = true;
-        poppedCard.transform.GetChild(0).gameObject.SetActive(false);
+        popLayer.gameObject.SetActive(false);
         board = new BoardState();
         this.displayPlayerId = MatureManager.playerID;
         board.cellPrefab = cellPrefab;
@@ -242,8 +242,8 @@ public class MatureManager : MonoBehaviour {
 
             if (board.currentPlayer.ghost)
             {
-                ghost.GetComponent<Image>().sprite = board.currentPlayer.ghostSprite;
-                ghost.SetActive(board.currentPlayer.ghost);
+                //ghost.GetComponent<Image>().sprite = board.currentPlayer.ghostSprite;
+                //ghost.SetActive(board.currentPlayer.ghost);
             }
             
             nextPlayer1.GetComponent<UIPlayer>().player = PlayerInfoChanged(1);
@@ -363,10 +363,10 @@ public class MatureManager : MonoBehaviour {
 
     public void SkipAction() {
         //for playtesting.
-        if (board.currentTurn >= board.maxTurns)
-        {
-            return;
-        }
+        //if (board.currentTurn >= board.maxTurns)
+        //{
+        //    return;
+        //}
         board.currentPlayer.UseAction(true);
     }
 
@@ -541,31 +541,13 @@ public class MatureManager : MonoBehaviour {
         currentPlayer.playerOG.GetComponent<Animator>().SetBool("isTurn", isTurn);
     }
 
-    public void MouseHoverCard(Transform card, Vector3 localPos, Card c) {
-        poppedCard.transform.localPosition = localPos;
-        GameObject popC = poppedCard.transform.GetChild(0).gameObject;
-        popC.SetActive(true);
-        Image img = poppedCard.GetComponentInChildren<Image>();
-        img.sprite = GetCardSprite(c);
-        popC.transform.GetChild(0).GetComponent<Text>().text = c.getName();
-        popC.transform.GetChild(1).GetComponent<Text>().text = c.getDescription();
-        destroyCard = true;
-    }
     private void Update()
     {
         if (this.client != null)
         {
             this.PullMessages();
         }
-        if (destroyCard) {
-            t += Time.deltaTime;
-            if (t >= 3) {
-                poppedCard.transform.GetChild(0).gameObject.SetActive(false);
-                destroyCard = false;
-                t = 0;
-                tempInfo.text = "Please take an action.";
-            }
-        }
+
     }
 
     public void DisplayEve(EventToken eve) {
@@ -664,7 +646,7 @@ public class MatureManager : MonoBehaviour {
     public void HighlightingBasicMoves() {
         foreach (GridInfo grid in this.board.currentPlayer.GetAdjacentGrids())
         {
-            if (!grid.obstacle && grid.player == null) {
+            if (!grid.obstacle && grid.player == null && !grid.hole) {
                 SpriteRenderer renderer = grid.cell.GetComponent<SpriteRenderer>();
                 renderer.sprite = greenCell;
                 Color c = renderer.color;
@@ -751,5 +733,34 @@ public class MatureManager : MonoBehaviour {
     {
         board.currentPlayer.AddRandomItem();
         
+    }
+
+    public void PlaceHoles()
+    {
+        int count = board.holes.Count;
+        if (count <= 15) {
+            while(board.holes.Count != 0)
+            {
+                UpdateHole(board.holes[0]);
+            }
+        }
+        else if (count > 15)
+        {
+            for (int i = 0; i < 15; ++i)
+            {
+                int index = board.random.Next(0, count-i);
+                GridInfo grid = board.holes[index];
+                UpdateHole(grid);
+            }
+        }
+        board.holes.Clear();
+    }
+    void UpdateHole(GridInfo grid)
+    {
+        grid.Clear();
+        grid.KillChild();
+        grid.hole = true;
+        grid.InitGameObject(this, false, board.isLight);
+        board.holes.Remove(grid);
     }
 }

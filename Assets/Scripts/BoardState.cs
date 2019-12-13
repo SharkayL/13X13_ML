@@ -15,11 +15,13 @@ public class BoardState {
     public bool isLight = true;
     public int currentTurn = 0;
     public PlayerState currentPlayer;
-    public int maxTurns = 40;
+    public int maxTurns = 60;
     public GameObject cellPrefab;
     public GameObject parent;
     public MatureManager manager;
     public bool over = false;
+    public List<GridInfo> holes = new List<GridInfo>();
+    public bool countDown = false;
     
     public static int defaultActionCount = 2;
 
@@ -240,18 +242,50 @@ public class BoardState {
         var oldPlayer = this.currentPlayer;
         oldPlayer.noItem = false;
         currentTurn += 1;
-        if (currentTurn >= maxTurns) {
-            //Return to mainMenu;
-            return;
-        }
-
+        
         currentPlayer = players[currentTurn % players.Count];
         if (currentPlayer.id == 0)
         {
-            roundsToFlip -= 1;
-            if (currentLayout != null)
+            if (currentTurn >= maxTurns)
             {
-                UpdatingObstacles(currentLayout);
+                countDown = true;
+                if (isLight)
+                {
+                    foreach (var grid in lightGrids)
+                    {
+                        if (!grid.obstacle && !grid.hole && !grid.exit && grid.player == null)
+                        {
+                            holes.Add(grid);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var grid in darkGrids)
+                    {
+                        if (!grid.obstacle && !grid.hole && !grid.exit && grid.player == null)
+                        {
+                            holes.Add(grid);
+                        }
+                    }
+                }
+            }
+            if (holes.Count > 0)
+            {
+                manager.PlaceHoles();
+            }
+            else
+            {
+                if (holes.Count == 0 && countDown)
+                {
+                    //gameover;
+                    return;
+                }
+                roundsToFlip -= 1;
+                if (currentLayout != null)
+                {
+                    UpdatingObstacles(currentLayout);
+                }
             }
             if (isLight)
             {
@@ -261,7 +295,7 @@ public class BoardState {
                 RecoverGridInfo(darkGrids);
             }
         }
-            if (aboutToFlip)
+            if (aboutToFlip && currentTurn<maxTurns)
             {
                 BoardFlip();
             }
@@ -344,12 +378,12 @@ public class BoardState {
         return players[number - 1];
     }
 
-    public bool gameOver
-    {
-        get {
-            return currentPlayer.ghost && GetTeammate(currentPlayer).ghost;
-        }
-    }
+    //public bool gameOver
+    //{
+    //    get {
+    //        return currentPlayer.ghost && GetTeammate(currentPlayer).ghost;
+    //    }
+    //}
     
     public PlayerState GetTeammate(PlayerState currentPlayer) {
         foreach(var player in players){
@@ -357,7 +391,6 @@ public class BoardState {
                 return player;
             }
         }
-        Debug.Log("No teammate");
         return null;
     }
 
@@ -436,11 +469,11 @@ public class BoardState {
                 grid.InitGameObject(manager, false, isLight);
                 grid.roundsToRecoverItem = 0;
             }
-            if (grid.roundsToRecoverCard > 1)
+            if (grid.roundsToRecoverCard > 1 && !grid.hole)
             {
                 --grid.roundsToRecoverCard;
             }
-            if (grid.roundsToRecoverItem > 1)
+            if (grid.roundsToRecoverItem > 1 && grid.hole)
             {
                 --grid.roundsToRecoverItem;
             }

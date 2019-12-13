@@ -293,7 +293,7 @@ public class RubberBand : EventToken
         int newCol = playedBy.col + (int)Math.Truncate((double)(teammate.col - playedBy.col) / 2);
         GridInfo pos = board.GetGrid(newCol, newRow);
         GridInfo currentPos = playedBy.currentCell;
-        if (!pos.obstacle && pos.player == null)
+        if (!pos.obstacle && pos.player == null && !pos.hole)
         {
             playedBy.currentCell = board.GetGrid(newCol, newRow);
             if (TeammateMove(playedBy) != null) {
@@ -301,10 +301,10 @@ public class RubberBand : EventToken
                 return true;
             }
         }
-        if (pos.obstacle) {
+        if (pos.obstacle || pos.hole) {
             playedBy.currentCell = board.GetGrid(newCol, newRow);
             foreach (var grid in playedBy.GetAdjacentGrids()) {
-                if (!grid.obstacle && grid.player == null) {
+                if (!grid.obstacle && grid.player == null && !grid.hole) {
                     playedBy.currentCell = grid;
                     if (TeammateMove(playedBy) != null) {
                         teammate.currentCell = TeammateMove(playedBy);
@@ -314,7 +314,7 @@ public class RubberBand : EventToken
             }
             foreach (var grid in playedBy.GetDiagonalGrids())
             {
-                if (!grid.obstacle && grid.player == null)
+                if (!grid.obstacle && grid.player == null &&!grid.hole)
                 {
                     playedBy.currentCell = grid;
                     if (TeammateMove(playedBy) != null)
@@ -332,14 +332,14 @@ public class RubberBand : EventToken
     public GridInfo TeammateMove(PlayerState playedBy) {
         foreach (var grid in playedBy.GetAdjacentGrids())
         {
-            if (!grid.obstacle && grid.player == null)
+            if (!grid.obstacle && grid.player == null && !grid.hole)
             {
                 return grid;
             }
         }
         foreach (var grid in playedBy.GetDiagonalGrids())
         {
-            if (!grid.obstacle && grid.player == null)
+            if (!grid.obstacle && grid.player == null && !grid.hole)
             {
                 return grid;
             }
@@ -363,7 +363,7 @@ public class BlackHole : EventToken
         int index = playedBy.board.random.Next(0, 2);
         foreach(var grid in opponents[index].GetAdjacentGrids())
         {
-            if (!grid.obstacle && grid.player == null)
+            if (!grid.obstacle && grid.player == null && !grid.hole)
             {
                 playedBy.currentCell = grid;
                 return true;
@@ -371,7 +371,7 @@ public class BlackHole : EventToken
         }
         foreach(var grid in opponents[index].GetDiagonalGrids())
         {
-            if(!grid.obstacle && grid.player == null)
+            if(!grid.obstacle && grid.player == null && !grid.hole)
             {
                 playedBy.currentCell = grid;
                 return true;

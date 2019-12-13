@@ -233,7 +233,7 @@ public class PlayerState
         }
         if (actionCount <= 0)
         {
-            board.manager.ghost.SetActive(false);
+            //board.manager.ghost.SetActive(false);
             board.NextTurn();
         }
         if (ghost) {
@@ -241,8 +241,8 @@ public class PlayerState
         }
         else if (ghost)
         {
-            board.manager.ghost.GetComponent<Image>().sprite = ghostSprite;
-            board.manager.ghost.SetActive(ghost);
+            //board.manager.ghost.GetComponent<Image>().sprite = ghostSprite;
+            //board.manager.ghost.SetActive(ghost);
         }
     }
     

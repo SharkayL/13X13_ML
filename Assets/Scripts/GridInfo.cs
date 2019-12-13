@@ -16,6 +16,7 @@ public class GridInfo
     public bool containsItem = false;
     public bool obstacle = false;
     public bool exit = false;
+    public bool hole = false;
     public BoardState board;
     public int roundsToRecoverItem = 0;
     public int roundsToRecoverCard = 0;
@@ -143,12 +144,19 @@ public class GridInfo
         if (this.exit) {
             obj = GameObject.Instantiate(manager.exit);
         }
+        if (this.hole)
+        {
+            obj = GameObject.Instantiate(manager.hole);
+        }
         PositionToSelf(obj);
 
     }
 
     public void KillChild()
     {
-        GameObject.Destroy(this.cell.transform.GetChild(0).gameObject);
+        if (this.cell.transform.childCount != 0)
+        {
+            GameObject.Destroy(this.cell.transform.GetChild(0).gameObject);
+        }
     }
 }

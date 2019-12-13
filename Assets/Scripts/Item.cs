@@ -591,7 +591,7 @@ public class EarthPower : Item
         {
             return false;
         }
-        if (!grid.containsCard && !grid.containsEve && !grid.containsItem && !grid.exit && !grid.obstacle)
+        if (!grid.containsCard && !grid.containsEve && !grid.containsItem && !grid.exit && !grid.obstacle && !grid.hole)
         {
             base.play(playedBy, grid, msg);
             board.AddObstacle(grid);

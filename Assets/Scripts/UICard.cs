@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler {
+public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler {
 
     public Card card;
     Vector3 localPos;
@@ -42,11 +42,19 @@ public class UICard : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler 
         {
             return;
         }
-        Debug.Log(card.getName());
         localPos = this.transform.localPosition;
         localPos.y += 10;
-        this.manager.MouseHoverCard(this.transform, localPos, card);
-        manager.tempInfo.text = string.Format("Current Card: " + this.card.GetType().Name);
+        manager.popLayer.gameObject.SetActive(true);
+        manager.popLayer.transform.localPosition = localPos;
+        var popC = manager.popLayer.transform.GetChild(0);        
+        Image img = popC.GetComponent<Image>();
+        img.sprite = manager.GetCardSprite(card);
+        popC.transform.GetChild(0).GetComponent<Text>().text = card.getName();
+        popC.transform.GetChild(1).GetComponent<Text>().text = card.getDescription();
     }
 
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        manager.popLayer.gameObject.SetActive(false);
+    }
 }
