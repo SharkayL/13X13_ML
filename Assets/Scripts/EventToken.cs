@@ -10,7 +10,7 @@ public enum possibleEvents {
     combo,
     shackle,
     handcuffs,
-    calamity,
+    curse,
     amnesty,
     rubberBand,
     blindTrade,
@@ -34,7 +34,7 @@ public abstract class EventToken
         }
         if (index >= 32 && index < 50)
         {
-            return possibleEvents.calamity;
+            return possibleEvents.curse;
         }
         if (index >= 50 && index < 65)
         {
@@ -76,8 +76,8 @@ public abstract class EventToken
         if (eve == possibleEvents.combo) {
             return new Combo();
         }
-        if (eve == possibleEvents.calamity) {
-            return new Calamity();
+        if (eve == possibleEvents.curse) {
+            return new Curse();
         }
         if (eve == possibleEvents.amnesty) {
             return new Amnesty();
@@ -186,7 +186,7 @@ public class Combo : EventToken
     }
 }
 
-public class Calamity : EventToken
+public class Curse : EventToken
 {
     public override bool canEffect(PlayerState playedBy) {
         if (!playedBy.ghost)

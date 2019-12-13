@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public enum GameStart
 {
@@ -50,7 +51,10 @@ public class MatureManager : MonoBehaviour {
     public Transform ratioPanel;
     public Dictionary<Card, Image> displayedCards = new Dictionary<Card, Image>();
     public Dictionary<Item, Image> displayedItems = new Dictionary<Item, Image>();
-
+    //public Image selectionLayer;
+    public Canvas selectionLayer;
+    public Image markedDiscard;
+    public Button confirmItemSelection;
     public GameObject poppedCard;
     bool destroyCard;
     float t = 0;
@@ -96,7 +100,7 @@ public class MatureManager : MonoBehaviour {
     public Sprite combo;
     public Sprite shackle;
     public Sprite handcuffs;
-    public Sprite calamity;
+    public Sprite curse;
     public Sprite amnesty;
     public Sprite blindTrade;
     public Sprite blackHole;
@@ -122,6 +126,7 @@ public class MatureManager : MonoBehaviour {
     public static int playerID = -1;
     bool started = false;
     public int displayPlayerId;
+    public Item toBeRemovedItem;
 
     // Use this for initialization
     public void Start () {
@@ -269,8 +274,10 @@ public class MatureManager : MonoBehaviour {
         };
         //board.Init();
         temp.GetComponent<Button>().onClick.AddListener(() => SkipAction());
-
-        if(MatureManager.startType == GameStart.server)
+        confirmItemSelection.GetComponent<Button>().onClick.AddListener(()=>ConfirmItemSelection());
+        selectionLayer.gameObject.SetActive(false);
+        markedDiscard.gameObject.SetActive(false);
+        if (MatureManager.startType == GameStart.server)
         {
             StartServer();
         }
@@ -362,6 +369,22 @@ public class MatureManager : MonoBehaviour {
         }
         board.currentPlayer.UseAction(true);
     }
+
+    private TaskCompletionSource<Item> pendingConfirmItemSelection;
+
+    public void ConfirmItemSelection()
+    {
+        if(pendingConfirmItemSelection == null)
+        {
+            return;
+        }
+        if (toBeRemovedItem != null)
+        {
+            markedDiscard.gameObject.SetActive(false);
+            pendingConfirmItemSelection.SetResult(toBeRemovedItem);
+        }
+    }
+
 
     public void BoardLayout(bool start)
     {
@@ -607,7 +630,7 @@ public class MatureManager : MonoBehaviour {
         if (eve is Combo) return combo;
         if (eve is Shackle) return shackle;
         if (eve is Handcuffs) return handcuffs;
-        if (eve is Calamity) return calamity;
+        if (eve is Curse) return curse;
         if (eve is Amnesty) return amnesty;
         if (eve is BlindTrade) return blindTrade;
         if (eve is BlackHole) return blackHole;
@@ -686,4 +709,47 @@ public class MatureManager : MonoBehaviour {
         nextPlayer3.GetComponentInChildren<Text>().text = string.Format("<b>{0}</b>{1}\n<b>{2}</b>{3}", "Cards: ", PlayerInfoChanged(3).movementCards.Count, "Items: ", PlayerInfoChanged(3).items.Count);
     }
 
+    public async Task<Item> ItemSelectionDisplay(Item itemToAdd)
+    {
+        selectionLayer.gameObject.SetActive(true);
+
+        UIItem[] itemsInIventory = FindObjectsOfType<UIItem>();
+        toBeRemovedItem = null;
+        var parent = selectionLayer.transform.GetChild(0);
+        this.pendingConfirmItemSelection = new TaskCompletionSource<Item>();
+        for (int i = 0; i < 5; ++i)
+        {
+            //selectableItems[i].item = itemsInIventory[i].item;
+            //selectableItems[i].board = this.board;
+            var child = parent.transform.GetChild(4-i).GetComponentInChildren<ItemSelection>();
+            child.item = itemsInIventory[i].item;
+            child.board = this.board;
+        }
+        var newAdded = parent.transform.GetChild(5).GetComponentInChildren<ItemSelection>();
+        newAdded.item = itemToAdd;
+        newAdded.board = this.board;
+        ItemSelection[] selectableItems = FindObjectsOfType<ItemSelection>();
+        foreach (var item in selectableItems) {
+            Image image = item.GetComponent<Image>();
+            image.sprite = GetItemSprite(item.item);
+        }
+        var itemToRemove =  await this.pendingConfirmItemSelection.Task;
+        selectionLayer.gameObject.SetActive(false);
+        return itemToRemove;
+    }
+
+    public async void ResolveItems(Item itemToAdd)
+    {
+        var turnBlock = new TaskCompletionSource<int>();
+        board.nextTurnBlock = turnBlock.Task;
+        var itemToRemove = await ItemSelectionDisplay(itemToAdd);
+        board.currentPlayer.DiscardItem(itemToRemove);
+        board.currentPlayer.AddItem(itemToAdd);
+        turnBlock.SetResult(0);
+    }
+    public void AddItem()
+    {
+        board.currentPlayer.AddRandomItem();
+        
+    }
 }

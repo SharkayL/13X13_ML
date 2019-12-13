@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Threading.Tasks;
 
 public class BoardState {
     public GridInfo[,] lightGrids = new GridInfo[13, 13];
@@ -11,7 +12,6 @@ public class BoardState {
     public List<PlayerState> players = new List<PlayerState>();
     protected int nextCardId = 0;
     protected int nextItemId = 0;
-    List<Item> items;
     public bool isLight = true;
     public int currentTurn = 0;
     public PlayerState currentPlayer;
@@ -228,8 +228,15 @@ public class BoardState {
         manager.actionsCount.text = defaultActionCount.ToString();
     }
 
-    public void NextTurn()
+    public Task<int> nextTurnBlock;
+
+    public async void NextTurn()
     {
+        if(nextTurnBlock != null)
+        {
+            await nextTurnBlock;
+        }
+        nextTurnBlock = null;
         var oldPlayer = this.currentPlayer;
         oldPlayer.noItem = false;
         currentTurn += 1;
@@ -245,7 +252,14 @@ public class BoardState {
             if (currentLayout != null)
             {
                 UpdatingObstacles(currentLayout);
-            }           
+            }
+            if (isLight)
+            {
+                RecoverGridInfo(lightGrids);
+            }
+            else {
+                RecoverGridInfo(darkGrids);
+            }
         }
             if (aboutToFlip)
             {
@@ -405,5 +419,32 @@ public class BoardState {
         grid.obstacle = false;
         var obs = grid.cell.transform.GetComponent<UIGrid>();
         GameObject.Destroy(obs.gameObject);
+    }
+    public void RecoverGridInfo(GridInfo[,] currentGrids)
+    {
+        foreach (var grid in currentGrids)
+        {
+            if (grid.roundsToRecoverCard == 1)
+            {
+                grid.containsCard = true;
+                grid.InitGameObject(manager, false, isLight);
+                grid.roundsToRecoverCard = 0;
+            }
+            if (grid.roundsToRecoverItem == 1)
+            {
+                grid.containsItem = true;
+                grid.InitGameObject(manager, false, isLight);
+                grid.roundsToRecoverItem = 0;
+            }
+            if (grid.roundsToRecoverCard > 1)
+            {
+                --grid.roundsToRecoverCard;
+            }
+            if (grid.roundsToRecoverItem > 1)
+            {
+                --grid.roundsToRecoverItem;
+            }
+        }
+
     }
 }

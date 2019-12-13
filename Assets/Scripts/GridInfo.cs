@@ -17,6 +17,8 @@ public class GridInfo
     public bool obstacle = false;
     public bool exit = false;
     public BoardState board;
+    public int roundsToRecoverItem = 0;
+    public int roundsToRecoverCard = 0;
 
     public GridInfo(int column,int row)
     {
@@ -143,5 +145,10 @@ public class GridInfo
         }
         PositionToSelf(obj);
 
+    }
+
+    public void KillChild()
+    {
+        GameObject.Destroy(this.cell.transform.GetChild(0).gameObject);
     }
 }

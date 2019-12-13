@@ -27,7 +27,7 @@ public class PlayerState
     public bool noItem = false;
     public bool canWinLight = false;
     public bool canWinDark = false;
-
+    public Item toBeRemovedItem = null;
     public PlayerState(BoardState board,int id)
     {
         this.id = id;
@@ -78,11 +78,21 @@ public class PlayerState
                                 --board.timesToOracle;
                             }
                             else AddRandomItem();
+
                         }
+                        else if (this.items.Count >= 5) {
+                            board.manager.ResolveItems(Item.PickRandomObj(board));
+                        }
+                        _currentCell.containsItem = false;
+                        _currentCell.roundsToRecoverItem = 2;
+                        _currentCell.KillChild();
                     }
                     if (value.containsCard)
                     {
                         AddRandomCard();
+                        _currentCell.containsCard = false;
+                        _currentCell.roundsToRecoverCard = 2;
+                        _currentCell.KillChild();
                     }
                 }
                 
