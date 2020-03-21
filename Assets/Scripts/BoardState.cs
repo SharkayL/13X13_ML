@@ -227,7 +227,7 @@ public class BoardState {
             players[i].InitPlayerCards();            
         }
         this.NotifyPlayerTurnStarted(this.currentPlayer, null,false);
-        manager.actionsCount.text = defaultActionCount.ToString();
+        manager.actionsCount.text = "Actions left:" + defaultActionCount.ToString();
     }
 
     public Task<int> nextTurnBlock;
@@ -307,7 +307,7 @@ public class BoardState {
         this.NotifyPlayerTurnStarted(currentPlayer, oldPlayer,true);
         
         //Vincent Add
-        manager.actionsCount.text = defaultActionCount.ToString();
+        manager.actionsCount.text = "Actions left:" + defaultActionCount.ToString();
     }
 
     void UpdatingObstacles(AdditionalBoards layout) {

@@ -70,7 +70,7 @@ public class GridInfo
     {
         if (obj)
         {
-            obj.transform.SetParent(cell.transform);
+            obj.transform.SetParent(cell.transform,false);
             obj.transform.localPosition = Vector3.zero;
         }
     }
@@ -149,7 +149,6 @@ public class GridInfo
             obj = GameObject.Instantiate(manager.hole);
         }
         PositionToSelf(obj);
-
     }
 
     public void KillChild()

@@ -221,7 +221,7 @@ public class PlayerState
         --actionCount;
         board.NotifyPlayerUsedAction(this,msg);
         board.manager.UpdatePlayerInfo();
-        board.manager.actionsCount.text = actionCount.ToString();
+        board.manager.actionsCount.text = "Actions left:" + actionCount.ToString();
         //Animation
         try
         {

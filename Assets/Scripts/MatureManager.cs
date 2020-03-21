@@ -16,7 +16,10 @@ public class MatureManager : MonoBehaviour {
     #region Visual objects
     public BoardState board;
     public GameObject cellPrefab;
-    int gridSize = 70;
+    [SerializeField]
+    private int gridSize = 65;
+    [SerializeField]
+    private int gridSpacing = 65; 
     public GameObject parent;
 
     [Header("Players")]
@@ -428,11 +431,12 @@ public class MatureManager : MonoBehaviour {
     public void CellDisplay(GridInfo g)
     {
         var obj = GameObject.Instantiate(cellPrefab);
-        obj.transform.SetParent(parent.transform);
+        obj.transform.SetParent(parent.transform,false);
 
         obj.GetComponent<UIGrid>().info = g;
-        g.cell = obj; 
-        obj.transform.localPosition = new Vector3(gridSize * g.column, gridSize * g.row, 0);
+        g.cell = obj;
+        obj.transform.localPosition = new Vector3(gridSpacing * g.column, gridSpacing * g.row, 0);
+        obj.transform.localScale = new Vector3(gridSize,gridSize,0);
     }
     public void ArrangeCard(PlayerState player, Dictionary<Card, Image> displayedCards) {
         if (displayPlayerId != -1 && displayPlayerId != player.id)
