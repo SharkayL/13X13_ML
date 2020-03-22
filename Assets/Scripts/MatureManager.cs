@@ -59,28 +59,25 @@ public class MatureManager : MonoBehaviour {
     public Image markedDiscard;
     public Button confirmItemSelection;
     public GameObject popLayer;
-    bool destroyCard;
-    float t = 0;
 
     [Header("Avatars")]
     public Image currentPlayer;
     public Image nextPlayer1;
     public Image nextPlayer2;
     public Image nextPlayer3;
+    public Text nextPlayer1_Cards;
+    public Text nextPlayer1_Items;
+    public Text nextPlayer2_Cards;
+    public Text nextPlayer2_Items;
+    public Text nextPlayer3_Cards;
+    public Text nextPlayer3_Items;
     public List<Sprite> playerSprites;
 
     [Header("UI_Info")]
-    public Text instruction;
     public Text actionsCount;
-    public Text tempInfo;
-    public string defaultText;
     public GameObject winPanel;
-    public Text eveText;
     public Image tooltip;
-
-    public Button temp;
-    bool h = false;
-    public GameObject i;
+    public Button skipActionButton;
 
     [Header("Items")]
     public Sprite magnetRed;
@@ -117,6 +114,7 @@ public class MatureManager : MonoBehaviour {
     public Sprite cro1;
     public Sprite str3;
 
+    [Header("Cell")]
     public Sprite whiteCell;
     public Sprite greenCell;
     #endregion 
@@ -144,7 +142,6 @@ public class MatureManager : MonoBehaviour {
         board.cellPrefab = cellPrefab;
         board.parent = parent;
         board.manager = this;
-        defaultText = instruction.text;
 
         this.board.teamWins = (team) =>
         {
@@ -219,7 +216,6 @@ public class MatureManager : MonoBehaviour {
         this.board.PlayerTriggersEve = (player, eve,msg) => {
             //Debug.Log(eve.GetType().Name);
             DisplayEve(eve);          
-            eveText.text = "Player"+(player.id +1) + " trigered Event: " + eve.GetType().Name;
         };
         this.board.playerUsedAction = (player,msg) =>
         {
@@ -271,12 +267,11 @@ public class MatureManager : MonoBehaviour {
                     UpdateDisplayedItems(player);
                 }
             }
-            instruction.text = defaultText;
             itemName.text = null;
             itemDescrib.text = null;
         };
         //board.Init();
-        temp.GetComponent<Button>().onClick.AddListener(() => SkipAction());
+        skipActionButton.GetComponent<Button>().onClick.AddListener(() => SkipAction());
         confirmItemSelection.GetComponent<Button>().onClick.AddListener(()=>ConfirmItemSelection());
         selectionLayer.gameObject.SetActive(false);
         markedDiscard.gameObject.SetActive(false);
@@ -385,6 +380,7 @@ public class MatureManager : MonoBehaviour {
         {
             markedDiscard.gameObject.SetActive(false);
             pendingConfirmItemSelection.SetResult(toBeRemovedItem);
+            UpdateDisplayedItems(currentPlayer.gameObject.GetComponent<UIPlayer>().player);
         }
     }
 
@@ -427,7 +423,6 @@ public class MatureManager : MonoBehaviour {
     }
 
 
-
     public void CellDisplay(GridInfo g)
     {
         var obj = GameObject.Instantiate(cellPrefab);
@@ -450,7 +445,7 @@ public class MatureManager : MonoBehaviour {
                 var key = entry.Key;
                 var obj = entry.Value;
                 int space = (560 - 10 * 2 - 110) / (player.movementCards.Count - 1);
-                obj.transform.localPosition = new Vector3(10 + space * player.CardIndex(key), -10, - 1 * player.CardIndex(key));
+                obj.transform.localPosition = new Vector3(-120 + space * player.CardIndex(key), 108.5f, - 1 * player.CardIndex(key));
             }
         }
         else
@@ -459,7 +454,8 @@ public class MatureManager : MonoBehaviour {
             {
                 var key = entry.Key;
                 var obj = entry.Value;
-                obj.transform.localPosition = new Vector3(10 + 110 * player.CardIndex(key), -10);
+
+                obj.transform.localPosition = new Vector3(-120 + 60 * player.CardIndex(key), 108.5f);
             }
         }
     }
@@ -485,7 +481,7 @@ public class MatureManager : MonoBehaviour {
         Image img = Image.Instantiate(this.board.manager.cardPrefab);
         img.sprite = this.GetCardSprite(card);
         img.GetComponent<UICard>().card = card;
-        img.transform.SetParent(this.cardInventory.transform);
+        img.transform.SetParent(this.cardInventory.transform,false);
         img.transform.localScale = new Vector3(1, 1, 1);
         displayedCards.Add(card, img);
         ArrangeCard(player, displayedCards);
@@ -502,7 +498,7 @@ public class MatureManager : MonoBehaviour {
         }
         Image img = Image.Instantiate(this.board.manager.imgPrefab);
         img.sprite = GetItemSprite(item);
-        img.transform.SetParent(this.itemInventory.transform);
+        img.transform.SetParent(itemInventory.transform, false);
         img.transform.localScale = new Vector3(1, 1, 1);
         displayedItems.Add(item, img);
         img.GetComponent<UIItem>().item = item;
@@ -690,9 +686,12 @@ public class MatureManager : MonoBehaviour {
         return playerInfo;
     }
     public void UpdatePlayerInfo() {
-        nextPlayer1.GetComponentInChildren<Text>().text = string.Format("<b>{0}</b>{1}\n<b>{2}</b>{3}", "Cards: ", PlayerInfoChanged(1).movementCards.Count, "Items: ", PlayerInfoChanged(1).items.Count);
-        nextPlayer2.GetComponentInChildren<Text>().text = string.Format("<b>{0}</b>{1}\n<b>{2}</b>{3}", "Cards: ", PlayerInfoChanged(2).movementCards.Count, "Items: ", PlayerInfoChanged(2).items.Count);
-        nextPlayer3.GetComponentInChildren<Text>().text = string.Format("<b>{0}</b>{1}\n<b>{2}</b>{3}", "Cards: ", PlayerInfoChanged(3).movementCards.Count, "Items: ", PlayerInfoChanged(3).items.Count);
+        nextPlayer1_Cards.text = PlayerInfoChanged(1).movementCards.Count.ToString();
+        nextPlayer1_Items.text = PlayerInfoChanged(1).items.Count.ToString();
+        nextPlayer2_Cards.text = PlayerInfoChanged(2).movementCards.Count.ToString();
+        nextPlayer2_Items.text = PlayerInfoChanged(2).items.Count.ToString();
+        nextPlayer3_Cards.text = PlayerInfoChanged(3).movementCards.Count.ToString();
+        nextPlayer3_Items.text = PlayerInfoChanged(3).items.Count.ToString();
     }
 
     public async Task<Item> ItemSelectionDisplay(Item itemToAdd)

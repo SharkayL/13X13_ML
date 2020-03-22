@@ -225,7 +225,7 @@ public class PlayerState
         //Animation
         try
         {
-            //board.manager.UpdateAnimation(this, ghost, actionCount > 0);
+            board.manager.UpdateAnimation(this, ghost, actionCount > 0);
         }
         catch(Exception err)
         {

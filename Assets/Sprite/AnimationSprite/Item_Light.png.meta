@@ -1,22 +1,22 @@
 fileFormatVersion: 2
-guid: 5f2e8aa925bdf4fcea4774c217b88fca
+guid: 5d548c401304e4614a6a50ae2da5913c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6487917195114175523
-    second: Movement_Light_0
+      213: -6197773315282476600
+    second: Item_Light_0
   - first:
-      213: -3578249796804510932
-    second: Movement_Light_1
+      213: -6229820359983476367
+    second: Item_Light_1
   - first:
-      213: -7702109246265815260
-    second: Movement_Light_2
+      213: -3242092962168499944
+    second: Item_Light_2
   - first:
-      213: -5654172556804332760
-    second: Movement_Light_3
+      213: -7857092910018075494
+    second: Item_Light_3
   - first:
-      213: -8494014832451989642
-    second: Movement_Light_4
+      213: 4009539247777302515
+    second: Item_Light_4
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -125,106 +125,106 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Movement_Light_0
+      name: Item_Light_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 64
-      alignment: 0
+        width: 70
+        height: 70
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e2dcc7949b8b0427aa10efe30fb69b83
-      internalID: 6487917195114175523
+      spriteID: 834a2f16e591e45eda77ab96719d84c6
+      internalID: -6197773315282476600
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Movement_Light_1
+      name: Item_Light_1
       rect:
         serializedVersion: 2
-        x: 64
+        x: 70
         y: 0
-        width: 64
-        height: 64
-      alignment: 0
+        width: 70
+        height: 70
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bfe8400badfff4befa9305e863e62f81
-      internalID: -3578249796804510932
+      spriteID: 78b88875e91544aeab5e0d350454aee7
+      internalID: -6229820359983476367
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Movement_Light_2
+      name: Item_Light_2
       rect:
         serializedVersion: 2
-        x: 128
+        x: 140
         y: 0
-        width: 64
-        height: 64
-      alignment: 0
+        width: 70
+        height: 70
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f0925308899884bd3a80967a7a01a81f
-      internalID: -7702109246265815260
+      spriteID: 1b5259f123ac84297804c734e1e0aa2b
+      internalID: -3242092962168499944
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Movement_Light_3
+      name: Item_Light_3
       rect:
         serializedVersion: 2
-        x: 192
+        x: 210
         y: 0
-        width: 64
-        height: 64
-      alignment: 0
+        width: 70
+        height: 70
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2b63cdc8a90344777be08f8814307617
-      internalID: -5654172556804332760
+      spriteID: b39fbc55df29744838fc84550f093eff
+      internalID: -7857092910018075494
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Movement_Light_4
+      name: Item_Light_4
       rect:
         serializedVersion: 2
-        x: 256
+        x: 280
         y: 0
-        width: 64
-        height: 64
-      alignment: 0
+        width: 70
+        height: 70
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8e0eb31fb73a04fec93f417b723c1783
-      internalID: -8494014832451989642
+      spriteID: fd4aa1f9e44c04aeab20679ed8bd363a
+      internalID: 4009539247777302515
       vertices: []
       indices: 
       edges: []

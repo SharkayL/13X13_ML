@@ -1,22 +1,55 @@
 fileFormatVersion: 2
-guid: 5d548c401304e4614a6a50ae2da5913c
+guid: 9094d595ab63f43a0b84048ca3769aac
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6197773315282476600
-    second: Item_Light_0
+      213: 8020143640844766479
+    second: spritesheet_0
   - first:
-      213: -6229820359983476367
-    second: Item_Light_1
+      213: -6251682230944352461
+    second: spritesheet_1
   - first:
-      213: -3242092962168499944
-    second: Item_Light_2
+      213: -1259408508766424310
+    second: spritesheet_2
   - first:
-      213: -7857092910018075494
-    second: Item_Light_3
+      213: -5962389079421231736
+    second: spritesheet_3
   - first:
-      213: 4009539247777302515
-    second: Item_Light_4
+      213: 2788568348960109317
+    second: spritesheet_4
+  - first:
+      213: 226702753830753226
+    second: spritesheet_5
+  - first:
+      213: -7921052967969465774
+    second: spritesheet_6
+  - first:
+      213: -1370661682523340017
+    second: spritesheet_7
+  - first:
+      213: -1053776163588617551
+    second: QuickSand_0
+  - first:
+      213: 7050032239158758558
+    second: QuickSand_1
+  - first:
+      213: -1526499491072854930
+    second: QuickSand_2
+  - first:
+      213: -2676275666486424767
+    second: QuickSand_3
+  - first:
+      213: -6638911300104459235
+    second: QuickSand_4
+  - first:
+      213: -2167978813948846970
+    second: QuickSand_5
+  - first:
+      213: -7587981834637717259
+    second: QuickSand_6
+  - first:
+      213: -6886787808131620281
+    second: QuickSand_7
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -125,106 +158,169 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Item_Light_0
+      name: QuickSand_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 70
-        height: 70
-      alignment: 0
+        width: 64
+        height: 64
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 834a2f16e591e45eda77ab96719d84c6
-      internalID: -6197773315282476600
+      spriteID: b6526f812221c4e9ba0927d3ee13f9c9
+      internalID: -1053776163588617551
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Item_Light_1
+      name: QuickSand_1
       rect:
         serializedVersion: 2
-        x: 70
+        x: 64
         y: 0
-        width: 70
-        height: 70
-      alignment: 0
+        width: 64
+        height: 64
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 78b88875e91544aeab5e0d350454aee7
-      internalID: -6229820359983476367
+      spriteID: 2b411d623bfd94221a51a95c22b26b70
+      internalID: 7050032239158758558
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Item_Light_2
+      name: QuickSand_2
       rect:
         serializedVersion: 2
-        x: 140
+        x: 128
         y: 0
-        width: 70
-        height: 70
-      alignment: 0
+        width: 64
+        height: 64
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1b5259f123ac84297804c734e1e0aa2b
-      internalID: -3242092962168499944
+      spriteID: acd98785cd914443f9d394385a693b36
+      internalID: -1526499491072854930
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Item_Light_3
+      name: QuickSand_3
       rect:
         serializedVersion: 2
-        x: 210
+        x: 192
         y: 0
-        width: 70
-        height: 70
-      alignment: 0
+        width: 64
+        height: 64
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b39fbc55df29744838fc84550f093eff
-      internalID: -7857092910018075494
+      spriteID: 9906fefeeaf2e4da983d4a489b466487
+      internalID: -2676275666486424767
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Item_Light_4
+      name: QuickSand_4
       rect:
         serializedVersion: 2
-        x: 280
+        x: 256
         y: 0
-        width: 70
-        height: 70
-      alignment: 0
+        width: 64
+        height: 64
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fd4aa1f9e44c04aeab20679ed8bd363a
-      internalID: 4009539247777302515
+      spriteID: 78038bcecc99e4805b06e3261a0b6264
+      internalID: -6638911300104459235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: QuickSand_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d464f964807e646dba2c74de5a11a618
+      internalID: -2167978813948846970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: QuickSand_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 64
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a7e68eca67a64b2a901718d96f93096
+      internalID: -7587981834637717259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: QuickSand_7
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 64
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78468912344dd466c8efea42e9ee25bd
+      internalID: -6886787808131620281
       vertices: []
       indices: 
       edges: []

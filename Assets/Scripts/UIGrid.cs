@@ -38,7 +38,6 @@ public void OnPointerClick(PointerEventData eventData)
             if (player.playingCard != null)
             {
                 if (player.playingCard.move(player, info,true)){
-                    board.manager.instruction.text = "You moved to a new position";
                     Debug.Log("moved");
                 }
                 

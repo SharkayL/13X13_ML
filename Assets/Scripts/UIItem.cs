@@ -39,7 +39,6 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         parent = this.transform.parent;
         this.transform.SetParent(manager.ratioPanel.transform);
         this.transform.position = Input.mousePosition;
-        manager.instruction.text = string.Format("You selected the" + item.GetType().Name + "!");
         return true;
     }
 
@@ -63,13 +62,10 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
             {
                 if (item.play(manager.board.currentPlayer, targetPlayer, true))
                 {
-                    manager.instruction.text = "current player used " + item.GetType().Name + " on target player.";
-                    //Debug.Log("current player used " + item.GetType().Name + " on target player." );
                 }
             }
             else if (grid != null) {
                 if (item.play(manager.board.currentPlayer, grid, true)) {
-                    manager.instruction.text = "current player used " + item.GetType().Name;
                 }
             }
         }
