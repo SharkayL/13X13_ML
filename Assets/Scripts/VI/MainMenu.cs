@@ -34,6 +34,8 @@ public class MainMenu : MonoBehaviour
     [Header("Audio")]
     public AudioMixer audioMixer;
 
+    [Header("Transition")]
+    public Transtion transtionPanel;
 
     private void Start()
     {

@@ -108,7 +108,7 @@ public class UI_Button : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,
                         SceneController.ExitGame();
                         break;
                     case ButtonType.Play:
-                        SceneController.JumpScene(1);
+                        MainMenu.i.transtionPanel.LoadSceneWithTransition();
                         break;
                     case ButtonType.Apply:
                         MainMenu.i.PressOption(false);

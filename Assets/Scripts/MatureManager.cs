@@ -59,6 +59,7 @@ public class MatureManager : MonoBehaviour {
     public Image markedDiscard;
     public Button confirmItemSelection;
     public GameObject popLayer;
+    public GameObject historyArea;
 
     [Header("Avatars")]
     public Image currentPlayer;
@@ -78,6 +79,7 @@ public class MatureManager : MonoBehaviour {
     public GameObject winPanel;
     public Image tooltip;
     public Button skipActionButton;
+    public Animator turnStartAnimation;
 
     [Header("Items")]
     public Sprite magnetRed;
@@ -117,6 +119,10 @@ public class MatureManager : MonoBehaviour {
     [Header("Cell")]
     public Sprite whiteCell;
     public Sprite greenCell;
+
+    [Header("HistoryIcon")]
+    public List<HistoryType> historyTypes = new List<HistoryType>();
+    public GameObject historyIconPrefab;
     #endregion 
     public List<GridInfo> highlightedGrids = new List<GridInfo>();
     public List<GridInfo> highlightedBasics = new List<GridInfo>();
@@ -166,8 +172,9 @@ public class MatureManager : MonoBehaviour {
             if(client != null && msg)
             {
                 client.SendPlayerUsedCard(player, card, grid);
-            }
+                UpdateHistroyIcon(HistoryType.TypeOfHistory.loseCard);
 
+            }
         };
         this.board.playerUsedItem = (player, target, item, msg) => {
             if(client != null && msg)
@@ -183,6 +190,7 @@ public class MatureManager : MonoBehaviour {
             if (board.timesToOracle > 0) {
                 --board.timesToOracle;
             }
+            UpdateHistroyIcon(HistoryType.TypeOfHistory.getItem);
             DisplayItem(player,item);
         };
         this.board.playerGetsCard = (player, card,msg) =>
@@ -191,6 +199,7 @@ public class MatureManager : MonoBehaviour {
             {
                 return;
             }
+            UpdateHistroyIcon(HistoryType.TypeOfHistory.getCard);
             DisplayCard(player,card);
         };
         this.board.playerLosesCard = (player, card, msg) =>
@@ -202,6 +211,7 @@ public class MatureManager : MonoBehaviour {
                 Destroy(image.gameObject);
                 displayedCards.Remove(card);
                 ArrangeCard(player, displayedCards);
+               
             }
         };
         this.board.playerLosesItem = (player, item, msg) =>
@@ -215,7 +225,7 @@ public class MatureManager : MonoBehaviour {
         };
         this.board.PlayerTriggersEve = (player, eve,msg) => {
             //Debug.Log(eve.GetType().Name);
-            DisplayEve(eve);          
+            DisplayEve(eve);
         };
         this.board.playerUsedAction = (player,msg) =>
         {
@@ -234,7 +244,6 @@ public class MatureManager : MonoBehaviour {
             nextPlayer2.sprite = playerSprites[(board.currentTurn +2) % board.players.Count];
             nextPlayer3.sprite = playerSprites[(board.currentTurn +3) % board.players.Count];
             currentPlayer.gameObject.GetComponent<UIPlayer>().player = newPlayer;
-
             UpdateAnimation(newPlayer, newPlayer.ghost, true);
             RecoveringGrids(true);
             HighlightingBasicMoves();
@@ -254,6 +263,7 @@ public class MatureManager : MonoBehaviour {
             {
                 if(displayPlayerId == -1)
                 {
+                    TurnStartAnimation(newPlayer.id);
                     UpdateDisplayedCards(newPlayer);
                     UpdateDisplayedItems(newPlayer);
                 }
@@ -275,6 +285,7 @@ public class MatureManager : MonoBehaviour {
         confirmItemSelection.GetComponent<Button>().onClick.AddListener(()=>ConfirmItemSelection());
         selectionLayer.gameObject.SetActive(false);
         markedDiscard.gameObject.SetActive(false);
+        Invoke("CleanHitoryIcon",0.1f);
         if (MatureManager.startType == GameStart.server)
         {
             StartServer();
@@ -380,7 +391,6 @@ public class MatureManager : MonoBehaviour {
         {
             markedDiscard.gameObject.SetActive(false);
             pendingConfirmItemSelection.SetResult(toBeRemovedItem);
-            UpdateDisplayedItems(currentPlayer.gameObject.GetComponent<UIPlayer>().player);
         }
     }
 
@@ -477,7 +487,7 @@ public class MatureManager : MonoBehaviour {
         if(displayPlayerId != -1 && displayPlayerId != player.id)
         {
             return;
-        } 
+        }
         Image img = Image.Instantiate(this.board.manager.cardPrefab);
         img.sprite = this.GetCardSprite(card);
         img.GetComponent<UICard>().card = card;
@@ -517,8 +527,9 @@ public class MatureManager : MonoBehaviour {
             }
         }
         displayedCards.Clear();
+        //UpdateHistroyIcon(HistoryType.TypeOfHistory.getCard);
         foreach (var card in currentPlayer.movementCards) {
-            DisplayCard(currentPlayer,card);
+            DisplayCard(currentPlayer, card);
         }
     }
     public void UpdateDisplayedItems(PlayerState currentPlayer) {
@@ -534,11 +545,15 @@ public class MatureManager : MonoBehaviour {
     }
 
     //Animation
-
     public void UpdateAnimation(PlayerState currentPlayer,bool isGhost, bool isTurn)
     {
         currentPlayer.playerOG.GetComponent<Animator>().SetBool("isGhost",isGhost);
         currentPlayer.playerOG.GetComponent<Animator>().SetBool("isTurn", isTurn);
+    }
+
+    public void TurnStartAnimation(int id) {
+        turnStartAnimation.GetComponentInChildren<Text>().text = id.ToString() + "'s Turn.";
+        turnStartAnimation.SetTrigger("TurnStart");
     }
 
     private void Update()
@@ -553,6 +568,8 @@ public class MatureManager : MonoBehaviour {
     public void DisplayEve(EventToken eve) {
         var img = GameObject.Instantiate(this.board.manager.eveImg);
         img.sprite = GetEveSprite(eve);
+
+        UpdateHistroyIcon(img.sprite);
 
         img.transform.SetParent(this.board.currentPlayer.playerOG.transform);
         img.transform.localPosition = new Vector3(0,0.5f,0);
@@ -765,5 +782,33 @@ public class MatureManager : MonoBehaviour {
         grid.hole = true;
         grid.InitGameObject(this, false, board.isLight);
         board.holes.Remove(grid);
+    }
+
+    void UpdateHistroyIcon(HistoryType.TypeOfHistory type) {
+        for (int i = 0; i < historyTypes.Count; i++)
+        {
+            if (historyTypes[i].historyIconType == type) {
+                GameObject o = Instantiate(historyIconPrefab);
+                o.transform.SetParent(historyArea.transform,false);
+                o.transform.GetChild(0).GetComponent<Image>().sprite = historyTypes[i].historySprite;
+            }
+        }
+    }
+
+    void UpdateHistroyIcon(Sprite sprite)
+    {
+        GameObject o = Instantiate(historyIconPrefab);
+        o.transform.SetParent(historyArea.transform, false);
+        o.transform.GetChild(0).GetComponent<Image>().sprite = sprite;
+    }
+
+    void CleanHitoryIcon()
+    {
+        if (historyArea.transform.childCount>0) {
+            for (int i = 0; i < historyArea.transform.childCount; i++)
+            {
+                Destroy(historyArea.transform.GetChild(i).gameObject);
+            }
+        }
     }
 }

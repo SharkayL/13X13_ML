@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler {
 
@@ -73,12 +74,14 @@ public class UIItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        manager.itemName.transform.parent.gameObject.SetActive(true);
         manager.itemName.text = string.Format("<b>{0}</b>", this.item.getName());
         manager.itemDescrib.text = string.Format(this.item.getDescription());
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        manager.itemName.transform.parent.gameObject.SetActive(false);
         manager.itemName.text = null;
         manager.itemDescrib.text = null;
     }
