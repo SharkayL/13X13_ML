@@ -2,3 +2,5 @@ A digital board game built with Machine Learning Tool Kit, supports single-playe
 
 Engine: Unity3D;
 Language: C#;
+Machine Learning;
+C# TCP services.
